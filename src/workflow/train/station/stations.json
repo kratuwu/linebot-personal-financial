@@ -1,0 +1,1579 @@
+[
+  {
+    "id": 79,
+    "code": "N24",
+    "name_th": "คูคต",
+    "name_en": "Khu Khot",
+    "type": "BTS",
+    "line_id": 1,
+    "line_th": "สายสุขุมวิท",
+    "line_en": "Sukhumvit Line"
+  },
+  {
+    "id": 78,
+    "code": "N23",
+    "name_th": "แยก คปอ.",
+    "name_en": "Yaek Kor Por Aor",
+    "type": "BTS",
+    "line_id": 1,
+    "line_th": "สายสุขุมวิท",
+    "line_en": "Sukhumvit Line"
+  },
+  {
+    "id": 77,
+    "code": "N22",
+    "name_th": "พิพิธภัณฑ์กองทัพอากาศ ",
+    "name_en": "Royal Thai Air Force Museum",
+    "type": "BTS",
+    "line_id": 1,
+    "line_th": "สายสุขุมวิท",
+    "line_en": "Sukhumvit Line"
+  },
+  {
+    "id": 76,
+    "code": "N21",
+    "name_th": "โรงพยาบาลภูมิพลอดุลยเดช",
+    "name_en": "Bhumibol Adulyadej Hospital",
+    "type": "BTS",
+    "line_id": 1,
+    "line_th": "สายสุขุมวิท",
+    "line_en": "Sukhumvit Line"
+  },
+  {
+    "id": 75,
+    "code": "N20",
+    "name_th": "สะพานใหม่",
+    "name_en": "Saphan Mai",
+    "type": "BTS",
+    "line_id": 1,
+    "line_th": "สายสุขุมวิท",
+    "line_en": "Sukhumvit Line"
+  },
+  {
+    "id": 74,
+    "code": "N19",
+    "name_th": "สายหยุด",
+    "name_en": "Sai Yud",
+    "type": "BTS",
+    "line_id": 1,
+    "line_th": "สายสุขุมวิท",
+    "line_en": "Sukhumvit Line"
+  },
+  {
+    "id": 73,
+    "code": "N18",
+    "name_th": "พหลโยธิน 59",
+    "name_en": "Phahon Yothin 59",
+    "type": "BTS",
+    "line_id": 1,
+    "line_th": "สายสุขุมวิท",
+    "line_en": "Sukhumvit Line"
+  },
+  {
+    "id": 69,
+    "code": "N17",
+    "name_th": "วัดพระศรีมหาธาตุ",
+    "name_en": "Wat Phra Sri Mahathat",
+    "type": "BTS",
+    "line_id": 1,
+    "line_th": "สายสุขุมวิท",
+    "line_en": "Sukhumvit Line"
+  },
+  {
+    "id": 68,
+    "code": "N16",
+    "name_th": "กรมทหารราบที่ 11 ",
+    "name_en": "11th Infantry Regiment",
+    "type": "BTS",
+    "line_id": 1,
+    "line_th": "สายสุขุมวิท",
+    "line_en": "Sukhumvit Line"
+  },
+  {
+    "id": 67,
+    "code": "N15",
+    "name_th": "บางบัว",
+    "name_en": "Bang Bua",
+    "type": "BTS",
+    "line_id": 1,
+    "line_th": "สายสุขุมวิท",
+    "line_en": "Sukhumvit Line"
+  },
+  {
+    "id": 66,
+    "code": "N14",
+    "name_th": "กรมป่าไม้",
+    "name_en": "Royal Forest Department",
+    "type": "BTS",
+    "line_id": 1,
+    "line_th": "สายสุขุมวิท",
+    "line_en": "Sukhumvit Line"
+  },
+  {
+    "id": 62,
+    "code": "N13",
+    "name_th": "มหาวิทยาลัยเกษตรศาสตร์",
+    "name_en": "Kasetsart University",
+    "type": "BTS",
+    "line_id": 1,
+    "line_th": "สายสุขุมวิท",
+    "line_en": "Sukhumvit Line"
+  },
+  {
+    "id": 61,
+    "code": "N12",
+    "name_th": "เสนานิคม",
+    "name_en": "Sena Nikhom",
+    "type": "BTS",
+    "line_id": 1,
+    "line_th": "สายสุขุมวิท",
+    "line_en": "Sukhumvit Line"
+  },
+  {
+    "id": 60,
+    "code": "N11",
+    "name_th": "รัชโยธิน",
+    "name_en": "Ratchayothin",
+    "type": "BTS",
+    "line_id": 1,
+    "line_th": "สายสุขุมวิท",
+    "line_en": "Sukhumvit Line"
+  },
+  {
+    "id": 59,
+    "code": "N10",
+    "name_th": "พหลโยธิน 24",
+    "name_en": "Phahon Yothin 24",
+    "type": "BTS",
+    "line_id": 1,
+    "line_th": "สายสุขุมวิท",
+    "line_en": "Sukhumvit Line"
+  },
+  {
+    "id": 54,
+    "code": "N9",
+    "name_th": "ห้าแยกลาดพร้าว",
+    "name_en": "Ha Yaek Lat Phrao",
+    "type": "BTS",
+    "line_id": 1,
+    "line_th": "สายสุขุมวิท",
+    "line_en": "Sukhumvit Line"
+  },
+  {
+    "id": 1,
+    "code": "N8",
+    "name_th": "หมอชิต",
+    "name_en": "Mo Chit",
+    "type": "BTS",
+    "line_id": 1,
+    "line_th": "สายสุขุมวิท",
+    "line_en": "Sukhumvit Line"
+  },
+  {
+    "id": 2,
+    "code": "N7",
+    "name_th": "สะพานควาย",
+    "name_en": "Saphan Khwai",
+    "type": "BTS",
+    "line_id": 1,
+    "line_th": "สายสุขุมวิท",
+    "line_en": "Sukhumvit Line"
+  },
+  {
+    "id": 3,
+    "code": "N5",
+    "name_th": "อารีย์",
+    "name_en": "Ari",
+    "type": "BTS",
+    "line_id": 1,
+    "line_th": "สายสุขุมวิท",
+    "line_en": "Sukhumvit Line"
+  },
+  {
+    "id": 4,
+    "code": "N4",
+    "name_th": "สนามเป้า",
+    "name_en": "Sanam Pao",
+    "type": "BTS",
+    "line_id": 1,
+    "line_th": "สายสุขุมวิท",
+    "line_en": "Sukhumvit Line"
+  },
+  {
+    "id": 5,
+    "code": "N3",
+    "name_th": "อนุสาวรีย์ชัยสมรภูมิ",
+    "name_en": "Victory Monument",
+    "type": "BTS",
+    "line_id": 1,
+    "line_th": "สายสุขุมวิท",
+    "line_en": "Sukhumvit Line"
+  },
+  {
+    "id": 6,
+    "code": "N2",
+    "name_th": "พญาไท",
+    "name_en": "Phaya Thai",
+    "type": "BTS",
+    "line_id": 1,
+    "line_th": "สายสุขุมวิท",
+    "line_en": "Sukhumvit Line"
+  },
+  {
+    "id": 7,
+    "code": "N1",
+    "name_th": "ราชเทวี",
+    "name_en": "Ratchathewi",
+    "type": "BTS",
+    "line_id": 1,
+    "line_th": "สายสุขุมวิท",
+    "line_en": "Sukhumvit Line"
+  },
+  {
+    "id": 8,
+    "code": "CEN",
+    "name_th": "สยาม",
+    "name_en": "Siam",
+    "type": "BTS",
+    "line_id": 1,
+    "line_th": "สายสุขุมวิท",
+    "line_en": "Sukhumvit Line"
+  },
+  {
+    "id": 9,
+    "code": "E1",
+    "name_th": "ชิดลม",
+    "name_en": "Chit Lom",
+    "type": "BTS",
+    "line_id": 1,
+    "line_th": "สายสุขุมวิท",
+    "line_en": "Sukhumvit Line"
+  },
+  {
+    "id": 10,
+    "code": "E2",
+    "name_th": "เพลินจิต",
+    "name_en": "Phloen Chit",
+    "type": "BTS",
+    "line_id": 1,
+    "line_th": "สายสุขุมวิท",
+    "line_en": "Sukhumvit Line"
+  },
+  {
+    "id": 11,
+    "code": "E3",
+    "name_th": "นานา",
+    "name_en": "Nana",
+    "type": "BTS",
+    "line_id": 1,
+    "line_th": "สายสุขุมวิท",
+    "line_en": "Sukhumvit Line"
+  },
+  {
+    "id": 12,
+    "code": "E4",
+    "name_th": "อโศก",
+    "name_en": "Asok",
+    "type": "BTS",
+    "line_id": 1,
+    "line_th": "สายสุขุมวิท",
+    "line_en": "Sukhumvit Line"
+  },
+  {
+    "id": 13,
+    "code": "E5",
+    "name_th": "พร้อมพงษ์",
+    "name_en": "Phrom Phong",
+    "type": "BTS",
+    "line_id": 1,
+    "line_th": "สายสุขุมวิท",
+    "line_en": "Sukhumvit Line"
+  },
+  {
+    "id": 14,
+    "code": "E6",
+    "name_th": "ทองหล่อ",
+    "name_en": "Thong Lo",
+    "type": "BTS",
+    "line_id": 1,
+    "line_th": "สายสุขุมวิท",
+    "line_en": "Sukhumvit Line"
+  },
+  {
+    "id": 15,
+    "code": "E7",
+    "name_th": "เอกมัย",
+    "name_en": "Ekkamai",
+    "type": "BTS",
+    "line_id": 1,
+    "line_th": "สายสุขุมวิท",
+    "line_en": "Sukhumvit Line"
+  },
+  {
+    "id": 16,
+    "code": "E8",
+    "name_th": "พระโขนง",
+    "name_en": "Phra Khanong",
+    "type": "BTS",
+    "line_id": 1,
+    "line_th": "สายสุขุมวิท",
+    "line_en": "Sukhumvit Line"
+  },
+  {
+    "id": 17,
+    "code": "E9",
+    "name_th": "อ่อนนุช",
+    "name_en": "On Nut",
+    "type": "BTS",
+    "line_id": 1,
+    "line_th": "สายสุขุมวิท",
+    "line_en": "Sukhumvit Line"
+  },
+  {
+    "id": 18,
+    "code": "E10",
+    "name_th": "บางจาก",
+    "name_en": "Bang Chak",
+    "type": "BTS",
+    "line_id": 1,
+    "line_th": "สายสุขุมวิท",
+    "line_en": "Sukhumvit Line"
+  },
+  {
+    "id": 19,
+    "code": "E11",
+    "name_th": "ปุณณวิถี",
+    "name_en": "Punnawithi",
+    "type": "BTS",
+    "line_id": 1,
+    "line_th": "สายสุขุมวิท",
+    "line_en": "Sukhumvit Line"
+  },
+  {
+    "id": 20,
+    "code": "E12",
+    "name_th": "อุดมสุข",
+    "name_en": "Udom Suk",
+    "type": "BTS",
+    "line_id": 1,
+    "line_th": "สายสุขุมวิท",
+    "line_en": "Sukhumvit Line"
+  },
+  {
+    "id": 21,
+    "code": "E13",
+    "name_th": "บางนา",
+    "name_en": "Bang Na",
+    "type": "BTS",
+    "line_id": 1,
+    "line_th": "สายสุขุมวิท",
+    "line_en": "Sukhumvit Line"
+  },
+  {
+    "id": 22,
+    "code": "E14",
+    "name_th": "แบริ่ง",
+    "name_en": "Bearing",
+    "type": "BTS",
+    "line_id": 1,
+    "line_th": "สายสุขุมวิท",
+    "line_en": "Sukhumvit Line"
+  },
+  {
+    "id": 23,
+    "code": "E15",
+    "name_th": "สำโรง",
+    "name_en": "Samrong",
+    "type": "BTS",
+    "line_id": 1,
+    "line_th": "สายสุขุมวิท",
+    "line_en": "Sukhumvit Line"
+  },
+  {
+    "id": 46,
+    "code": "E16",
+    "name_th": "ปู่เจ้า",
+    "name_en": "Pu Chao",
+    "type": "BTS",
+    "line_id": 1,
+    "line_th": "สายสุขุมวิท",
+    "line_en": "Sukhumvit Line"
+  },
+  {
+    "id": 47,
+    "code": "E17",
+    "name_th": "ช้างเอราวัณ",
+    "name_en": "Chang Erawan",
+    "type": "BTS",
+    "line_id": 1,
+    "line_th": "สายสุขุมวิท",
+    "line_en": "Sukhumvit Line"
+  },
+  {
+    "id": 48,
+    "code": "E18",
+    "name_th": "โรงเรียนนายเรือ",
+    "name_en": "Royal Thai Naval Academy",
+    "type": "BTS",
+    "line_id": 1,
+    "line_th": "สายสุขุมวิท",
+    "line_en": "Sukhumvit Line"
+  },
+  {
+    "id": 49,
+    "code": "E19",
+    "name_th": "ปากน้ำ",
+    "name_en": "Pak Nam",
+    "type": "BTS",
+    "line_id": 1,
+    "line_th": "สายสุขุมวิท",
+    "line_en": "Sukhumvit Line"
+  },
+  {
+    "id": 50,
+    "code": "E20",
+    "name_th": "ศรีนครินทร์",
+    "name_en": "Srinagarindra",
+    "type": "BTS",
+    "line_id": 1,
+    "line_th": "สายสุขุมวิท",
+    "line_en": "Sukhumvit Line"
+  },
+  {
+    "id": 51,
+    "code": "E21",
+    "name_th": "แพรกษา",
+    "name_en": "Phraek Sa",
+    "type": "BTS",
+    "line_id": 1,
+    "line_th": "สายสุขุมวิท",
+    "line_en": "Sukhumvit Line"
+  },
+  {
+    "id": 52,
+    "code": "E22",
+    "name_th": "สายลวด",
+    "name_en": "Sai Luat",
+    "type": "BTS",
+    "line_id": 1,
+    "line_th": "สายสุขุมวิท",
+    "line_en": "Sukhumvit Line"
+  },
+  {
+    "id": 53,
+    "code": "E23",
+    "name_th": "เคหะฯ ",
+    "name_en": "Kheha",
+    "type": "BTS",
+    "line_id": 1,
+    "line_th": "สายสุขุมวิท",
+    "line_en": "Sukhumvit Line"
+  },
+  {
+    "id": 26,
+    "code": "W1",
+    "name_th": "สนามกีฬาแห่งชาติ",
+    "name_en": "National Stadium",
+    "type": "BTS",
+    "line_id": 2,
+    "line_th": "สายสีลม",
+    "line_en": "Silom Line"
+  },
+  {
+    "id": 27,
+    "code": "CEN",
+    "name_th": "สยาม",
+    "name_en": "Siam",
+    "type": "BTS",
+    "line_id": 2,
+    "line_th": "สายสีลม",
+    "line_en": "Silom Line"
+  },
+  {
+    "id": 28,
+    "code": "S1",
+    "name_th": "ราชดำริ",
+    "name_en": "Ratchadamri",
+    "type": "BTS",
+    "line_id": 2,
+    "line_th": "สายสีลม",
+    "line_en": "Silom Line"
+  },
+  {
+    "id": 29,
+    "code": "S2",
+    "name_th": "ศาลาแดง",
+    "name_en": "Sala Daeng",
+    "type": "BTS",
+    "line_id": 2,
+    "line_th": "สายสีลม",
+    "line_en": "Silom Line"
+  },
+  {
+    "id": 30,
+    "code": "S3",
+    "name_th": "ช่องนนทรี",
+    "name_en": "Chong Nonsi",
+    "type": "BTS",
+    "line_id": 2,
+    "line_th": "สายสีลม",
+    "line_en": "Silom Line"
+  },
+  {
+    "id": 80,
+    "code": "S4",
+    "name_th": "เซนต์หลุยส์",
+    "name_en": "Saint Louis",
+    "type": "BTS",
+    "line_id": 2,
+    "line_th": "สายสีลม",
+    "line_en": "Silom Line"
+  },
+  {
+    "id": 31,
+    "code": "S5",
+    "name_th": "สุรศักดิ์",
+    "name_en": "Surasak",
+    "type": "BTS",
+    "line_id": 2,
+    "line_th": "สายสีลม",
+    "line_en": "Silom Line"
+  },
+  {
+    "id": 32,
+    "code": "S6",
+    "name_th": "สะพานตากสิน",
+    "name_en": "Saphan Taksin",
+    "type": "BTS",
+    "line_id": 2,
+    "line_th": "สายสีลม",
+    "line_en": "Silom Line"
+  },
+  {
+    "id": 33,
+    "code": "S7",
+    "name_th": "กรุงธนบุรี",
+    "name_en": "Krung Thon Buri",
+    "type": "BTS",
+    "line_id": 2,
+    "line_th": "สายสีลม",
+    "line_en": "Silom Line"
+  },
+  {
+    "id": 34,
+    "code": "S8",
+    "name_th": "วงเวียนใหญ่",
+    "name_en": "Wongwian Yai",
+    "type": "BTS",
+    "line_id": 2,
+    "line_th": "สายสีลม",
+    "line_en": "Silom Line"
+  },
+  {
+    "id": 35,
+    "code": "S9",
+    "name_th": "โพธิ์นิมิตร",
+    "name_en": "Pho Nimit",
+    "type": "BTS",
+    "line_id": 2,
+    "line_th": "สายสีลม",
+    "line_en": "Silom Line"
+  },
+  {
+    "id": 36,
+    "code": "S10",
+    "name_th": "ตลาดพลู",
+    "name_en": "Talat Phlu",
+    "type": "BTS",
+    "line_id": 2,
+    "line_th": "สายสีลม",
+    "line_en": "Silom Line"
+  },
+  {
+    "id": 37,
+    "code": "S11",
+    "name_th": "วุฒากาศ",
+    "name_en": "Wutthakat",
+    "type": "BTS",
+    "line_id": 2,
+    "line_th": "สายสีลม",
+    "line_en": "Silom Line"
+  },
+  {
+    "id": 38,
+    "code": "S12",
+    "name_th": "บางหว้า",
+    "name_en": "Bang Wa",
+    "type": "BTS",
+    "line_id": 2,
+    "line_th": "สายสีลม",
+    "line_en": "Silom Line"
+  },
+  {
+    "id": 70,
+    "code": "G1",
+    "name_th": "กรุงธนบุรี (Gold Line)",
+    "name_en": "Krung Thon Buri (Gold Line)",
+    "type": "BTS",
+    "line_id": 3,
+    "line_th": "สายสีทอง",
+    "line_en": "Gold Line"
+  },
+  {
+    "id": 71,
+    "code": "G2",
+    "name_th": "เจริญนคร",
+    "name_en": "Charoen Nakhon",
+    "type": "BTS",
+    "line_id": 3,
+    "line_th": "สายสีทอง",
+    "line_en": "Gold Line"
+  },
+  {
+    "id": 72,
+    "code": "G3",
+    "name_th": "คลองสาน",
+    "name_en": "Khlong San",
+    "type": "BTS",
+    "line_id": 3,
+    "line_th": "สายสีทอง",
+    "line_en": "Gold Line"
+  },
+  {
+    "id": 81,
+    "code": "YL01",
+    "name_th": "ลาดพร้าว",
+    "name_en": "Lat Phrao",
+    "type": "BTS",
+    "line_id": 4,
+    "line_th": "สายสีเหลือง",
+    "line_en": "Yellow Line"
+  },
+  {
+    "id": 82,
+    "code": "YL02",
+    "name_th": "ภาวนา",
+    "name_en": "Phawana",
+    "type": "BTS",
+    "line_id": 4,
+    "line_th": "สายสีเหลือง",
+    "line_en": "Yellow Line"
+  },
+  {
+    "id": 83,
+    "code": "YL03",
+    "name_th": "โชคชัย 4",
+    "name_en": "Chok Chai 4",
+    "type": "BTS",
+    "line_id": 4,
+    "line_th": "สายสีเหลือง",
+    "line_en": "Yellow Line"
+  },
+  {
+    "id": 84,
+    "code": "YL04",
+    "name_th": "ลาดพร้าว 71",
+    "name_en": "Lat Phrao 71",
+    "type": "BTS",
+    "line_id": 4,
+    "line_th": "สายสีเหลือง",
+    "line_en": "Yellow Line"
+  },
+  {
+    "id": 85,
+    "code": "YL05",
+    "name_th": "ลาดพร้าว 83",
+    "name_en": "Lat Phrao 83",
+    "type": "BTS",
+    "line_id": 4,
+    "line_th": "สายสีเหลือง",
+    "line_en": "Yellow Line"
+  },
+  {
+    "id": 87,
+    "code": "YL06",
+    "name_th": "มหาดไทย",
+    "name_en": "Mahat Thai",
+    "type": "BTS",
+    "line_id": 4,
+    "line_th": "สายสีเหลือง",
+    "line_en": "Yellow Line"
+  },
+  {
+    "id": 86,
+    "code": "YL07",
+    "name_th": "ลาดพร้าว 101",
+    "name_en": "Lat Phrao 101",
+    "type": "BTS",
+    "line_id": 4,
+    "line_th": "สายสีเหลือง",
+    "line_en": "Yellow Line"
+  },
+  {
+    "id": 88,
+    "code": "YL08",
+    "name_th": "บางกะปิ",
+    "name_en": "Bang Kapi",
+    "type": "BTS",
+    "line_id": 4,
+    "line_th": "สายสีเหลือง",
+    "line_en": "Yellow Line"
+  },
+  {
+    "id": 89,
+    "code": "YL09",
+    "name_th": "แยกลำสาลี",
+    "name_en": "Yaek Lam Sali",
+    "type": "BTS",
+    "line_id": 4,
+    "line_th": "สายสีเหลือง",
+    "line_en": "Yellow Line"
+  },
+  {
+    "id": 90,
+    "code": "YL10",
+    "name_th": "ศรีกรีฑา",
+    "name_en": "Si Kritha",
+    "type": "BTS",
+    "line_id": 4,
+    "line_th": "สายสีเหลือง",
+    "line_en": "Yellow Line"
+  },
+  {
+    "id": 91,
+    "code": "YL11",
+    "name_th": "หัวหมาก",
+    "name_en": "Hua Mak",
+    "type": "BTS",
+    "line_id": 4,
+    "line_th": "สายสีเหลือง",
+    "line_en": "Yellow Line"
+  },
+  {
+    "id": 92,
+    "code": "YL12",
+    "name_th": "กลันตัน",
+    "name_en": "Kalantan",
+    "type": "BTS",
+    "line_id": 4,
+    "line_th": "สายสีเหลือง",
+    "line_en": "Yellow Line"
+  },
+  {
+    "id": 93,
+    "code": "YL13",
+    "name_th": "ศรีนุช",
+    "name_en": "Si Nut",
+    "type": "BTS",
+    "line_id": 4,
+    "line_th": "สายสีเหลือง",
+    "line_en": "Yellow Line"
+  },
+  {
+    "id": 94,
+    "code": "YL14",
+    "name_th": "ศรีนครินทร์ 38",
+    "name_en": "Srinagarindra 38",
+    "type": "BTS",
+    "line_id": 4,
+    "line_th": "สายสีเหลือง",
+    "line_en": "Yellow Line"
+  },
+  {
+    "id": 95,
+    "code": "YL15",
+    "name_th": "สวนหลวง ร.9",
+    "name_en": "Suan Luang Rama IX",
+    "type": "BTS",
+    "line_id": 4,
+    "line_th": "สายสีเหลือง",
+    "line_en": "Yellow Line"
+  },
+  {
+    "id": 96,
+    "code": "YL16",
+    "name_th": "ศรีอุดม",
+    "name_en": "Si Udom",
+    "type": "BTS",
+    "line_id": 4,
+    "line_th": "สายสีเหลือง",
+    "line_en": "Yellow Line"
+  },
+  {
+    "id": 97,
+    "code": "YL17",
+    "name_th": "ศรีเอี่ยม",
+    "name_en": "Si lam",
+    "type": "BTS",
+    "line_id": 4,
+    "line_th": "สายสีเหลือง",
+    "line_en": "Yellow Line"
+  },
+  {
+    "id": 98,
+    "code": "YL18",
+    "name_th": "ศรีลาซาล",
+    "name_en": "Si La Salle",
+    "type": "BTS",
+    "line_id": 4,
+    "line_th": "สายสีเหลือง",
+    "line_en": "Yellow Line"
+  },
+  {
+    "id": 99,
+    "code": "YL19",
+    "name_th": "ศรีแบริ่ง",
+    "name_en": "Si Bearing",
+    "type": "BTS",
+    "line_id": 4,
+    "line_th": "สายสีเหลือง",
+    "line_en": "Yellow Line"
+  },
+  {
+    "id": 100,
+    "code": "YL20",
+    "name_th": "ศรีด่าน",
+    "name_en": "Si Dan",
+    "type": "BTS",
+    "line_id": 4,
+    "line_th": "สายสีเหลือง",
+    "line_en": "Yellow Line"
+  },
+  {
+    "id": 101,
+    "code": "YL21",
+    "name_th": "ศรีเทพา",
+    "name_en": "Si Thepha",
+    "type": "BTS",
+    "line_id": 4,
+    "line_th": "สายสีเหลือง",
+    "line_en": "Yellow Line"
+  },
+  {
+    "id": 102,
+    "code": "YL22",
+    "name_th": "ทิพวัล",
+    "name_en": "Thipphawan",
+    "type": "BTS",
+    "line_id": 4,
+    "line_th": "สายสีเหลือง",
+    "line_en": "Yellow Line"
+  },
+  {
+    "id": 103,
+    "code": "YL23",
+    "name_th": "สำโรง",
+    "name_en": "Samrong",
+    "type": "BTS",
+    "line_id": 4,
+    "line_th": "สายสีเหลือง",
+    "line_en": "Yellow Line"
+  },
+  {
+    "id": 134,
+    "code": "PK01",
+    "name_th": "ศูนย์ราชการนนทบุรี",
+    "name_en": "Nonthaburi Civic Center",
+    "type": "BTS",
+    "line_id": 5,
+    "line_th": "สายสีชมพู",
+    "line_en": "Pink Line"
+  },
+  {
+    "id": 135,
+    "code": "PK02",
+    "name_th": "แคราย",
+    "name_en": "Khae Rai",
+    "type": "BTS",
+    "line_id": 5,
+    "line_th": "สายสีชมพู",
+    "line_en": "Pink Line"
+  },
+  {
+    "id": 136,
+    "code": "PK03",
+    "name_th": "สนามบินน้ำ",
+    "name_en": "Sanambin Nam",
+    "type": "BTS",
+    "line_id": 5,
+    "line_th": "สายสีชมพู",
+    "line_en": "Pink Line"
+  },
+  {
+    "id": 137,
+    "code": "PK04",
+    "name_th": "สามัคคี",
+    "name_en": "Samakkhi",
+    "type": "BTS",
+    "line_id": 5,
+    "line_th": "สายสีชมพู",
+    "line_en": "Pink Line"
+  },
+  {
+    "id": 138,
+    "code": "PK05",
+    "name_th": "กรมชลประทาน",
+    "name_en": "Royal Irrigation Department",
+    "type": "BTS",
+    "line_id": 5,
+    "line_th": "สายสีชมพู",
+    "line_en": "Pink Line"
+  },
+  {
+    "id": 139,
+    "code": "PK06",
+    "name_th": "แยกปากเกร็ด",
+    "name_en": "Yaek Pak Kret",
+    "type": "BTS",
+    "line_id": 5,
+    "line_th": "สายสีชมพู",
+    "line_en": "Pink Line"
+  },
+  {
+    "id": 140,
+    "code": "PK07",
+    "name_th": "เลี่ยงเมืองปากเกร็ด",
+    "name_en": "Pak Kret Bypass",
+    "type": "BTS",
+    "line_id": 5,
+    "line_th": "สายสีชมพู",
+    "line_en": "Pink Line"
+  },
+  {
+    "id": 141,
+    "code": "PK08",
+    "name_th": "แจ้งวัฒนะ-ปากเกร็ด 28",
+    "name_en": "Chaeng Watthana-Pak Kret 28",
+    "type": "BTS",
+    "line_id": 5,
+    "line_th": "สายสีชมพู",
+    "line_en": "Pink Line"
+  },
+  {
+    "id": 142,
+    "code": "PK09",
+    "name_th": "ศรีรัช",
+    "name_en": "Si Rat",
+    "type": "BTS",
+    "line_id": 5,
+    "line_th": "สายสีชมพู",
+    "line_en": "Pink Line"
+  },
+  {
+    "id": 143,
+    "code": "PK10",
+    "name_th": "เมืองทองธานี",
+    "name_en": "Muang Thong Thani",
+    "type": "BTS",
+    "line_id": 5,
+    "line_th": "สายสีชมพู",
+    "line_en": "Pink Line"
+  },
+  {
+    "id": 144,
+    "code": "PK11",
+    "name_th": "แจ้งวัฒนะ 14",
+    "name_en": "Chaeng Watthana 14",
+    "type": "BTS",
+    "line_id": 5,
+    "line_th": "สายสีชมพู",
+    "line_en": "Pink Line"
+  },
+  {
+    "id": 145,
+    "code": "PK12",
+    "name_th": "ศูนย์ราชการเฉลิมพระเกียรติ",
+    "name_en": "Government Complex",
+    "type": "BTS",
+    "line_id": 5,
+    "line_th": "สายสีชมพู",
+    "line_en": "Pink Line"
+  },
+  {
+    "id": 146,
+    "code": "PK13",
+    "name_th": "โทรคมนาคมแห่งชาติ",
+    "name_en": "National Telecom",
+    "type": "BTS",
+    "line_id": 5,
+    "line_th": "สายสีชมพู",
+    "line_en": "Pink Line"
+  },
+  {
+    "id": 147,
+    "code": "PK14",
+    "name_th": "หลักสี่",
+    "name_en": "Lak Si",
+    "type": "BTS",
+    "line_id": 5,
+    "line_th": "สายสีชมพู",
+    "line_en": "Pink Line"
+  },
+  {
+    "id": 148,
+    "code": "PK15",
+    "name_th": "ราชภัฏพระนคร",
+    "name_en": "Rajabhat Phranakhon",
+    "type": "BTS",
+    "line_id": 5,
+    "line_th": "สายสีชมพู",
+    "line_en": "Pink Line"
+  },
+  {
+    "id": 149,
+    "code": "PK16",
+    "name_th": "วัดพระศรีมหาธาตุ",
+    "name_en": "Wat Phra Sri Mahathat",
+    "type": "BTS",
+    "line_id": 5,
+    "line_th": "สายสีชมพู",
+    "line_en": "Pink Line"
+  },
+  {
+    "id": 150,
+    "code": "PK17",
+    "name_th": "รามอินทรา 3",
+    "name_en": "Ram Inthra 3",
+    "type": "BTS",
+    "line_id": 5,
+    "line_th": "สายสีชมพู",
+    "line_en": "Pink Line"
+  },
+  {
+    "id": 151,
+    "code": "PK18",
+    "name_th": "ลาดปลาเค้า",
+    "name_en": "Lat Pla Khao",
+    "type": "BTS",
+    "line_id": 5,
+    "line_th": "สายสีชมพู",
+    "line_en": "Pink Line"
+  },
+  {
+    "id": 152,
+    "code": "PK19",
+    "name_th": "รามอินทรา กม.4",
+    "name_en": "Ram Inthra Kor Mor 4",
+    "type": "BTS",
+    "line_id": 5,
+    "line_th": "สายสีชมพู",
+    "line_en": "Pink Line"
+  },
+  {
+    "id": 153,
+    "code": "PK20",
+    "name_th": "มัยลาภ",
+    "name_en": "Maiyalap",
+    "type": "BTS",
+    "line_id": 5,
+    "line_th": "สายสีชมพู",
+    "line_en": "Pink Line"
+  },
+  {
+    "id": 154,
+    "code": "PK21",
+    "name_th": "วัชรพล",
+    "name_en": "Vacharaphol",
+    "type": "BTS",
+    "line_id": 5,
+    "line_th": "สายสีชมพู",
+    "line_en": "Pink Line"
+  },
+  {
+    "id": 155,
+    "code": "PK22",
+    "name_th": "รามอินทรา กม.6",
+    "name_en": "Ram Inthra Kor Mor 6",
+    "type": "BTS",
+    "line_id": 5,
+    "line_th": "สายสีชมพู",
+    "line_en": "Pink Line"
+  },
+  {
+    "id": 156,
+    "code": "PK23",
+    "name_th": "คู้บอน",
+    "name_en": "Khu Bon",
+    "type": "BTS",
+    "line_id": 5,
+    "line_th": "สายสีชมพู",
+    "line_en": "Pink Line"
+  },
+  {
+    "id": 157,
+    "code": "PK24",
+    "name_th": "รามอินทรา กม.9",
+    "name_en": "Ram Inthra Kor Mor 9",
+    "type": "BTS",
+    "line_id": 5,
+    "line_th": "สายสีชมพู",
+    "line_en": "Pink Line"
+  },
+  {
+    "id": 158,
+    "code": "PK25",
+    "name_th": "วงแหวนรามอินทรา",
+    "name_en": "Outer Ring Road-Ram Inthra",
+    "type": "BTS",
+    "line_id": 5,
+    "line_th": "สายสีชมพู",
+    "line_en": "Pink Line"
+  },
+  {
+    "id": 159,
+    "code": "PK26",
+    "name_th": "นพรัตน์",
+    "name_en": "Nopparat",
+    "type": "BTS",
+    "line_id": 5,
+    "line_th": "สายสีชมพู",
+    "line_en": "Pink Line"
+  },
+  {
+    "id": 160,
+    "code": "PK27",
+    "name_th": "บางชัน",
+    "name_en": "Bang Chan",
+    "type": "BTS",
+    "line_id": 5,
+    "line_th": "สายสีชมพู",
+    "line_en": "Pink Line"
+  },
+  {
+    "id": 161,
+    "code": "PK28",
+    "name_th": "เศรษฐบุตรบำเพ็ญ",
+    "name_en": "Setthabutbamphen",
+    "type": "BTS",
+    "line_id": 5,
+    "line_th": "สายสีชมพู",
+    "line_en": "Pink Line"
+  },
+  {
+    "id": 162,
+    "code": "PK29",
+    "name_th": "ตลาดมีนบุรี",
+    "name_en": "Min Buri Market",
+    "type": "BTS",
+    "line_id": 5,
+    "line_th": "สายสีชมพู",
+    "line_en": "Pink Line"
+  },
+  {
+    "id": 163,
+    "code": "PK30",
+    "name_th": "มีนบุรี",
+    "name_en": "Min Buri",
+    "type": "BTS",
+    "line_id": 5,
+    "line_th": "สายสีชมพู",
+    "line_en": "Pink Line"
+  },
+  {
+    "id": 164,
+    "code": "MT01",
+    "name_th": "สถานีอิมแพ็ค เมืองทองธานี",
+    "name_en": "Impact Muang Thong Thani",
+    "type": "BTS",
+    "line_id": 5,
+    "line_th": "สายสีชมพู",
+    "line_en": "Pink Line"
+  },
+  {
+    "id": 165,
+    "code": "MT02",
+    "name_th": "สถานีทะเลสาบเมืองทองธานี",
+    "name_en": "Lake Muang Thong Thani",
+    "type": "BTS",
+    "line_id": 5,
+    "line_th": "สายสีชมพู",
+    "line_en": "Pink Line"
+  },
+  {
+    "code": "BL01",
+    "name_th": "ท่าพระ",
+    "name_en": "Tha Phra",
+    "type": "MRT",
+    "line_th": "สายสีน้ำเงิน",
+    "line_en": "Blue Line"
+  },
+  {
+    "code": "BL02",
+    "name_th": "จรัญฯ 13",
+    "name_en": "Charan 13",
+    "type": "MRT",
+    "line_th": "สายสีน้ำเงิน",
+    "line_en": "Blue Line"
+  },
+  {
+    "code": "BL03",
+    "name_th": "ไฟฉาย",
+    "name_en": "Fai Chai",
+    "type": "MRT",
+    "line_th": "สายสีน้ำเงิน",
+    "line_en": "Blue Line"
+  },
+  {
+    "code": "BL04",
+    "name_th": "บางขุนนนท์",
+    "name_en": "Bang Khun Non",
+    "type": "MRT",
+    "line_th": "สายสีน้ำเงิน",
+    "line_en": "Blue Line"
+  },
+  {
+    "code": "BL05",
+    "name_th": "บางยี่ขัน",
+    "name_en": "Bang Yi Khan",
+    "type": "MRT",
+    "line_th": "สายสีน้ำเงิน",
+    "line_en": "Blue Line"
+  },
+  {
+    "code": "BL06",
+    "name_th": "สิรินธร",
+    "name_en": "Sirindhorn",
+    "type": "MRT",
+    "line_th": "สายสีน้ำเงิน",
+    "line_en": "Blue Line"
+  },
+  {
+    "code": "BL07",
+    "name_th": "บางพลัด",
+    "name_en": "Bang Phlat",
+    "type": "MRT",
+    "line_th": "สายสีน้ำเงิน",
+    "line_en": "Blue Line"
+  },
+  {
+    "code": "BL08",
+    "name_th": "บางอ้อ",
+    "name_en": "Bang O",
+    "type": "MRT",
+    "line_th": "สายสีน้ำเงิน",
+    "line_en": "Blue Line"
+  },
+  {
+    "code": "BL09",
+    "name_th": "บางโพ",
+    "name_en": "Bang Pho",
+    "type": "MRT",
+    "line_th": "สายสีน้ำเงิน",
+    "line_en": "Blue Line"
+  },
+  {
+    "code": "BL10",
+    "name_th": "เตาปูน",
+    "name_en": "Tao Poon",
+    "type": "MRT",
+    "line_th": "สายสีน้ำเงิน",
+    "line_en": "Blue Line"
+  },
+
+  {
+    "code": "BL11",
+    "name_th": "บางซื่อ",
+    "name_en": "Bang Sue",
+    "type": "MRT",
+    "line_th": "สายสีน้ำเงิน",
+    "line_en": "Blue Line"
+  },
+  {
+    "code": "BL12",
+    "name_th": "กำแพงเพชร",
+    "name_en": "Kamphaeng Phet",
+    "type": "MRT",
+    "line_th": "สายสีน้ำเงิน",
+    "line_en": "Blue Line"
+  },
+  {
+    "code": "BL13",
+    "name_th": "จตุจักร",
+    "name_en": "Chatuchak Park",
+    "type": "MRT",
+    "line_th": "สายสีน้ำเงิน",
+    "line_en": "Blue Line"
+  },
+  {
+    "code": "BL14",
+    "name_th": "พหลโยธิน",
+    "name_en": "Phahon Yothin",
+    "type": "MRT",
+    "line_th": "สายสีน้ำเงิน",
+    "line_en": "Blue Line"
+  },
+  {
+    "code": "BL15",
+    "name_th": "ลาดพร้าว",
+    "name_en": "Lat Phrao",
+    "type": "MRT",
+    "line_th": "สายสีน้ำเงิน",
+    "line_en": "Blue Line"
+  },
+  {
+    "code": "BL16",
+    "name_th": "รัชดาภิเษก",
+    "name_en": "Ratchadaphisek",
+    "type": "MRT",
+    "line_th": "สายสีน้ำเงิน",
+    "line_en": "Blue Line"
+  },
+  {
+    "code": "BL17",
+    "name_th": "สุทธิสาร",
+    "name_en": "Sutthisan",
+    "type": "MRT",
+    "line_th": "สายสีน้ำเงิน",
+    "line_en": "Blue Line"
+  },
+  {
+    "code": "BL18",
+    "name_th": "ห้วยขวาง",
+    "name_en": "Huai Khwang",
+    "type": "MRT",
+    "line_th": "สายสีน้ำเงิน",
+    "line_en": "Blue Line"
+  },
+  {
+    "code": "BL19",
+    "name_th": "ศูนย์วัฒนธรรมแห่งประเทศไทย",
+    "name_en": "Thailand Cultural Centre",
+    "type": "MRT",
+    "line_th": "สายสีน้ำเงิน",
+    "line_en": "Blue Line"
+  },
+  {
+    "code": "BL20",
+    "name_th": "พระราม 9",
+    "name_en": "Phra Ram 9",
+    "type": "MRT",
+    "line_th": "สายสีน้ำเงิน",
+    "line_en": "Blue Line"
+  },
+
+  {
+    "code": "BL21",
+    "name_th": "เพชรบุรี",
+    "name_en": "Phetchaburi",
+    "type": "MRT",
+    "line_th": "สายสีน้ำเงิน",
+    "line_en": "Blue Line"
+  },
+  {
+    "code": "BL22",
+    "name_th": "สุขุมวิท",
+    "name_en": "Sukhumvit",
+    "type": "MRT",
+    "line_th": "สายสีน้ำเงิน",
+    "line_en": "Blue Line"
+  },
+  {
+    "code": "BL23",
+    "name_th": "ศูนย์การประชุมแห่งชาติสิริกิติ์",
+    "name_en": "Queen Sirikit National Convention Centre",
+    "type": "MRT",
+    "line_th": "สายสีน้ำเงิน",
+    "line_en": "Blue Line"
+  },
+  {
+    "code": "BL24",
+    "name_th": "คลองเตย",
+    "name_en": "Khlong Toei",
+    "type": "MRT",
+    "line_th": "สายสีน้ำเงิน",
+    "line_en": "Blue Line"
+  },
+  {
+    "code": "BL25",
+    "name_th": "ลุมพินี",
+    "name_en": "Lumphini",
+    "type": "MRT",
+    "line_th": "สายสีน้ำเงิน",
+    "line_en": "Blue Line"
+  },
+  {
+    "code": "BL26",
+    "name_th": "สีลม",
+    "name_en": "Si Lom",
+    "type": "MRT",
+    "line_th": "สายสีน้ำเงิน",
+    "line_en": "Blue Line"
+  },
+  {
+    "code": "BL27",
+    "name_th": "สามย่าน",
+    "name_en": "Sam Yan",
+    "type": "MRT",
+    "line_th": "สายสีน้ำเงิน",
+    "line_en": "Blue Line"
+  },
+  {
+    "code": "BL28",
+    "name_th": "หัวลำโพง",
+    "name_en": "Hua Lamphong",
+    "type": "MRT",
+    "line_th": "สายสีน้ำเงิน",
+    "line_en": "Blue Line"
+  },
+  {
+    "code": "BL29",
+    "name_th": "วัดมังกร",
+    "name_en": "Wat Mangkon",
+    "type": "MRT",
+    "line_th": "สายสีน้ำเงิน",
+    "line_en": "Blue Line"
+  },
+  {
+    "code": "BL30",
+    "name_th": "สามยอด",
+    "name_en": "Sam Yot",
+    "type": "MRT",
+    "line_th": "สายสีน้ำเงิน",
+    "line_en": "Blue Line"
+  },
+
+  {
+    "code": "BL31",
+    "name_th": "สนามไชย",
+    "name_en": "Sanam Chai",
+    "type": "MRT",
+    "line_th": "สายสีน้ำเงิน",
+    "line_en": "Blue Line"
+  },
+  {
+    "code": "BL32",
+    "name_th": "อิสรภาพ",
+    "name_en": "Itsaraphap",
+    "type": "MRT",
+    "line_th": "สายสีน้ำเงิน",
+    "line_en": "Blue Line"
+  },
+  {
+    "code": "PP01",
+    "name_th": "คลองบางไผ่",
+    "name_en": "Khlong Bang Phai",
+    "type": "MRT",
+    "line_th": "สายสีม่วง",
+    "line_en": "Purple Line"
+  },
+  {
+    "code": "PP02",
+    "name_th": "ตลาดบางใหญ่",
+    "name_en": "Talad Bang Yai",
+    "type": "MRT",
+    "line_th": "สายสีม่วง",
+    "line_en": "Purple Line"
+  },
+  {
+    "code": "PP03",
+    "name_th": "สามแยกบางใหญ่",
+    "name_en": "Sam Yaek Bang Yai",
+    "type": "MRT",
+    "line_th": "สายสีม่วง",
+    "line_en": "Purple Line"
+  },
+  {
+    "code": "PP04",
+    "name_th": "บางพลู",
+    "name_en": "Bang Phlu",
+    "type": "MRT",
+    "line_th": "สายสีม่วง",
+    "line_en": "Purple Line"
+  },
+  {
+    "code": "PP05",
+    "name_th": "บางรักใหญ่",
+    "name_en": "Bang Rak Yai",
+    "type": "MRT",
+    "line_th": "สายสีม่วง",
+    "line_en": "Purple Line"
+  },
+  {
+    "code": "PP06",
+    "name_th": "บางรักน้อย-ท่าอิฐ",
+    "name_en": "Bang Rak Noi Tha It",
+    "type": "MRT",
+    "line_th": "สายสีม่วง",
+    "line_en": "Purple Line"
+  },
+  {
+    "code": "PP07",
+    "name_th": "ไทรม้า",
+    "name_en": "Sai Ma",
+    "type": "MRT",
+    "line_th": "สายสีม่วง",
+    "line_en": "Purple Line"
+  },
+  {
+    "code": "PP08",
+    "name_th": "สะพานพระนั่งเกล้า",
+    "name_en": "Phra Nang Klao Bridge",
+    "type": "MRT",
+    "line_th": "สายสีม่วง",
+    "line_en": "Purple Line"
+  },
+  {
+    "code": "PP09",
+    "name_th": "แยกนนทบุรี 1",
+    "name_en": "Yaek Nonthaburi 1",
+    "type": "MRT",
+    "line_th": "สายสีม่วง",
+    "line_en": "Purple Line"
+  },
+  {
+    "code": "PP10",
+    "name_th": "บางกระสอ",
+    "name_en": "Bang Krasor",
+    "type": "MRT",
+    "line_th": "สายสีม่วง",
+    "line_en": "Purple Line"
+  },
+  {
+    "code": "PP11",
+    "name_th": "ศูนย์ราชการนนทบุรี",
+    "name_en": "Nonthaburi Civic Center",
+    "type": "MRT",
+    "line_th": "สายสีม่วง",
+    "line_en": "Purple Line"
+  },
+  {
+    "code": "PP12",
+    "name_th": "กระทรวงสาธารณสุข",
+    "name_en": "Ministry of Public Health",
+    "type": "MRT",
+    "line_th": "สายสีม่วง",
+    "line_en": "Purple Line"
+  },
+  {
+    "code": "PP13",
+    "name_th": "แยกติวานนท์",
+    "name_en": "Yaek Tiwanon",
+    "type": "MRT",
+    "line_th": "สายสีม่วง",
+    "line_en": "Purple Line"
+  },
+  {
+    "code": "PP14",
+    "name_th": "วงศ์สว่าง",
+    "name_en": "Wong Sawang",
+    "type": "MRT",
+    "line_th": "สายสีม่วง",
+    "line_en": "Purple Line"
+  },
+  {
+    "code": "PP15",
+    "name_th": "บางซ่อน",
+    "name_en": "Bang Son",
+    "type": "MRT",
+    "line_th": "สายสีม่วง",
+    "line_en": "Purple Line"
+  },
+  {
+    "code": "PP16",
+    "name_th": "เตาปูน",
+    "name_en": "Tao Poon",
+    "type": "MRT",
+    "line_th": "สายสีม่วง",
+    "line_en": "Purple Line"
+  }
+]

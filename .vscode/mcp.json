@@ -1,0 +1,9 @@
+{
+	"servers": {
+		"Notion Docs": {
+			"url": "https://developers.notion.com/mcp",
+			"type": "http"
+		}
+	},
+	"inputs": []
+}
