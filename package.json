@@ -1,23 +1,16 @@
 {
-  "name": "notion-personal-finance",
-  "version": "1.0.50",
+  "name": "linebot-personal-financial",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "bun run --watch src/index.ts"
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy --minify",
+    "cf-typegen": "wrangler types --env-interface CloudflareBindings"
   },
   "dependencies": {
-    "@elysiajs/swagger": "^1.3.1",
-    "@notionhq/client": "^5.9.0",
-    "dotenv": "^17.3.1",
-    "drizzle-orm": "^0.45.1",
-    "drizzle-typebox": "^0.3.3",
-    "elysia": "^1.4.25",
     "fuse.js": "^7.1.0",
-    "pg": "^8.18.0",
-    "postgres": "^3.4.8"
+    "hono": "^4.12.3"
   },
   "devDependencies": {
-    "bun-types": "latest"
-  },
-  "module": "src/index.js"
+    "wrangler": "^4.4.0"
+  }
 }

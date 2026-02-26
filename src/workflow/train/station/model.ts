@@ -1,4 +1,4 @@
-export type StationModel = {
+export type Station = {
   id: number;
   code: string;
   name_th: string;
