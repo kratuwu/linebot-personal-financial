@@ -13,5 +13,5 @@ export async function insertExpend(
   amount: number,
   category: string,
 ) {
-  console.log("Inserting Transportation Fare:", { source, amount });
+  console.log(`Inserting ${tag} Fare:`, { source, amount });
 }
