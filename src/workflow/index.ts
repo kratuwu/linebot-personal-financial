@@ -118,6 +118,7 @@ export async function startGeneralProcess(
 ) {
   userStates.set(userId, { stage: "WAIT_SOURCE" });
   await processSetTag(accessToken, userId, replyToken, tag);
+  console.log(userStates)
 }
 
 export async function processSetTag(
@@ -148,6 +149,7 @@ async function processSetSource(
     source: text,
     category: userState.category,
   });
+  console.log(userState)
   return replyMessage(accessToken, replyToken, "กรุณาใส่จำนวนเงิน");
 }
 
