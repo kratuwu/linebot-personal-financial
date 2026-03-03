@@ -60,6 +60,7 @@ app.post("/webhook", async (c) => {
       event.message.text,
     );
   }
+  console.log({type,userState: event.message})
   return c.text("OK");
 });
 

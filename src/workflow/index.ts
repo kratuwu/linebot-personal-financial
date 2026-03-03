@@ -116,9 +116,7 @@ export async function startGeneralProcess(
   replyToken: any,
   tag: any,
 ) {
-  userStates.set(userId, { stage: "WAIT_SOURCE" });
   await processSetTag(accessToken, userId, replyToken, tag);
-  console.log(userStates)
 }
 
 export async function processSetTag(
@@ -134,6 +132,7 @@ export async function processSetTag(
     tag: tag,
   });
   await replyMessage(accessToken, replyToken, "กรุณาใส่รายละเอียด");
+    console.log(userState);
 }
 
 async function processSetSource(
