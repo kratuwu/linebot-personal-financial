@@ -95,6 +95,7 @@ export async function processTextMessage(
   replyToken: string,
   text: string,
 ) {
+  console.log({userId})
   const userState = userStates.get(userId);
   console.log(userState)
   if (userState?.stage === "WAIT_TAG") {
