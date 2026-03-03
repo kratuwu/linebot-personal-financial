@@ -3,7 +3,7 @@ import * as WorkFlow from "./workflow";
 
 type Bindings = {
   CHANNEL_SECRET: string;
-  CHANNEL_ACCESS_TOKEN: string;
+  LINE_CHANNEL_ACCESS_TOKEN: string;
 };
 const app = new Hono<{ Bindings: Bindings }>();
 
@@ -19,7 +19,7 @@ app.post("/webhook", async (c) => {
     source: { userId },
     type,
   } = event;
-  const accessToken = c.env.CHANNEL_ACCESS_TOKEN;
+  const accessToken = c.env.LINE_CHANNEL_ACCESS_TOKEN;
   if (type === "postback") {
     const params = new URLSearchParams(event.postback.data);
     const action = params.get("action");

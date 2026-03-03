@@ -17,5 +17,16 @@
       "persist": true,
       "head_sampling_rate": 1
     }
+  },
+  "vars": {
+    "APP_ENV": "dev"
+  },
+  "env": {
+    "production": {
+      "name": "line-bot",
+      "vars": {
+        "APP_ENV": "production"
+      }
+    }
   }
 }
