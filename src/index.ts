@@ -57,7 +57,6 @@ app.post("/webhook", async (c) => {
       event.message.text,
     );
   }
-  console.log({isMessage: type === "message",isText: event.message.type === "text"})
   return c.text("OK");
 });
 
