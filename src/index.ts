@@ -1,9 +1,9 @@
 import { Hono } from "hono";
 import * as WorkFlow from "./workflow";
-
 type Bindings = {
   CHANNEL_SECRET: string;
   LINE_CHANNEL_ACCESS_TOKEN: string;
+  KV: KVNamespace
 };
 const app = new Hono<{ Bindings: Bindings }>();
 
@@ -27,15 +27,17 @@ app.post("/webhook", async (c) => {
     if (action === "start") {
       if (process === "general") {
         await WorkFlow.startGeneralProcess(
+          c.env.KV,
           accessToken,
           userId,
           replyToken,
           params.get("tag"),
         );
       } else if (process === "train") {
-        await WorkFlow.startProcessTrain(accessToken, userId, replyToken);
+        await WorkFlow.startProcessTrain(c.env.KV, accessToken, userId, replyToken);
       } else if (process === "manual") {
         await WorkFlow.startProcessManual(
+          c.env.KV,
           accessToken,
           userId,
           replyToken,
@@ -43,9 +45,10 @@ app.post("/webhook", async (c) => {
         );
       }
     } else if (action === "train") {
-      await WorkFlow.processTrain(accessToken, userId, replyToken, params);
+      await WorkFlow.processTrain(c.env.KV, accessToken, userId, replyToken, params);
     } else if (action === "tag") {
       await WorkFlow.processSetTag(
+        c.env.KV,
         accessToken,
         userId,
         replyToken,
@@ -54,6 +57,7 @@ app.post("/webhook", async (c) => {
     }
   } else if (type === "message" && event.message.type === "text") {
     await WorkFlow.processTextMessage(
+      c.env.KV,
       accessToken,
       userId,
       replyToken,

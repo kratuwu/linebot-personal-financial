@@ -2,27 +2,28 @@ import { quickReplyMessages, replyFlex, replyMessage } from "../lineApi";
 import * as Train from "./train";
 import tags from "./tags.json";
 import { insertExpend, insertTransportation } from "./expende";
-const userStates = new Map<
-  string,
-  {
-    tag?: string;
-    stage: string;
-    category?: string;
-    source?: string;
-  }
->();
+type UserState = {
+  tag?: string;
+  state: string;
+  category?: string;
+  source?: string;
+};
 
 export async function startProcessTrain(
+  kv: KVNamespace,
   accessToken: string,
   userId: any,
   replyToken: any,
 ) {
-  userStates.set(userId, {
-    stage: "WAIT_STATION",
-    tag: "transportation",
-  });
-  const sugestStation = Train.processSuggestPath(userId);
-  console.log(sugestStation)
+  await kv.put(
+    userId,
+    JSON.stringify({
+      state: "WAIT_STATION",
+      tag: "transportation",
+    }),
+  );
+  const sugestStation = await Train.processSuggestPath(kv, userId);
+  console.log(sugestStation);
   await quickReplyMessages(
     accessToken,
     replyToken,
@@ -32,22 +33,23 @@ export async function startProcessTrain(
 }
 
 export async function processTrain(
+  kv: KVNamespace,
   accessToken: string,
   userId: string,
   replyToken: string,
   params: URLSearchParams,
 ) {
   const process = params.get("process");
-  console.log(process)
+  console.log(process);
   if (process === "set_route") {
     const flexMessage = Train.getConfirmationFlex(
       params.get("origin")!,
       params.get("dest")!,
     );
     await replyFlex(accessToken, replyToken, [flexMessage]);
-    userStates.delete(userId);
+    await kv.delete(userId);
   } else if (process === "set_origin") {
-    Train.setTrainOrigin(userId, params.get("origin")!);
+    await Train.setTrainOrigin(kv, userId, params.get("origin")!);
     await replyMessage(
       accessToken,
       replyToken,
@@ -57,23 +59,27 @@ export async function processTrain(
     const replyText = `${params.get("origin")} -> ${params.get("dest")}`;
     await replyMessage(accessToken, replyToken, "บันทึกค่าเดินทางเรียบร้อย");
     await insertTransportation(replyText, parseInt(params.get("fare")!));
-    userStates.delete(userId);
+    kv.delete(userId);
   } else if (process === "cancel_fare") {
     await replyMessage(accessToken, replyToken, "ยกเลิกการบันทึกค่าเดินทาง");
-    userStates.delete(userId);
+    kv.delete(userId);
   }
 }
 
 export async function startProcessManual(
+  kv: KVNamespace,
   accessToken: string,
   userId: string,
   replyToken: string,
   category: string,
 ) {
-  userStates.set(userId, {
-    stage: "WAIT_TAG",
-    category,
-  });
+  await kv.put(
+    userId,
+    JSON.stringify({
+      state: "WAIT_TAG",
+      category,
+    }),
+  );
   await quickReplyMessages(
     accessToken,
     replyToken,
@@ -90,74 +96,82 @@ export async function startProcessManual(
 }
 
 export async function processTextMessage(
+  kv: KVNamespace,
   accessToken: string,
   userId: string,
   replyToken: string,
   text: string,
 ) {
-  const userState = userStates.get(userId);
-  console.log({userState})
-  if (userState?.stage === "WAIT_TAG") {
-    return await processSetTag(accessToken, userId, replyToken, text);
+  const userState = await kv.get<UserState>(userId, "json");
+  console.log({ userState });
+  if (userState?.state === "WAIT_TAG") {
+    return await processSetTag(kv, accessToken, userId, replyToken, text);
   }
-  if (userState?.stage === "WAIT_SOURCE") {
-    return await processSetSource(accessToken, userId, replyToken, text);
+  if (userState?.state === "WAIT_SOURCE") {
+    return await processSetSource(kv, accessToken, userId, replyToken, text);
   }
-  if (userState?.stage === "WAIT_AMOUNT") {
-    return await processAmount(accessToken, userId, replyToken, text);
+  if (userState?.state === "WAIT_AMOUNT") {
+    return await processAmount(kv, accessToken, userId, replyToken, text);
   }
-  if (userState?.stage === "WAIT_STATION") {
-    return await processSearchStation(accessToken, replyToken, userId, text);
+  if (userState?.state === "WAIT_STATION") {
+    return await processSearchStation(kv, accessToken, replyToken, userId, text);
   }
 }
 
 export async function startGeneralProcess(
+  kv: KVNamespace,
   accessToken: string,
   userId: any,
   replyToken: any,
   tag: any,
 ) {
-  userStates.set(userId, {
-    stage: "WAIT_SOURCE",
-    category: "consumable",
-    tag: tag,
-  });
+  await kv.put(
+    userId,
+    JSON.stringify({
+      state: "WAIT_SOURCE",
+      category: "consumable",
+      tag: tag,
+    }),
+  );
   await replyMessage(accessToken, replyToken, "กรุณาใส่รายละเอียด");
 }
 export async function processSetTag(
+  kv: KVNamespace,
   accessToken: string,
   userId: any,
   replyToken: any,
   tag: any,
 ) {
-  const userState = userStates.get(userId)!;
-  userStates.set(userId, {
-    stage: "WAIT_SOURCE",
-    category: userState.category,
+  const userState = await kv.get<UserState>(userId);
+  await kv.put(userId, JSON.stringify({
+    state: "WAIT_SOURCE",
+    category: userState?.category,
     tag: tag,
-  });
+  }));
   await replyMessage(accessToken, replyToken, "กรุณาใส่รายละเอียด");
-    console.log(userState);
 }
 
 async function processSetSource(
+  kv: KVNamespace,
   accessToken: string,
   userId: string,
   replyToken: string,
   text: string,
 ) {
-  const userState = userStates.get(userId)!;
+  const userState = await kv.get<UserState>(userId, "json")!;
 
-  userStates.set(userId, {
-    stage: "WAIT_AMOUNT",
+  await kv.put(userId, JSON.stringify({
+    state: "WAIT_AMOUNT",
     source: text,
-    category: userState.category,
-  });
-  console.log(userState)
+    tag: userState?.tag,
+    category: userState?.category,
+  }));
+  console.log(userState);
   return replyMessage(accessToken, replyToken, "กรุณาใส่จำนวนเงิน");
 }
 
 async function processAmount(
+  kv: KVNamespace,
   accessToken: string,
   userId: string,
   replyToken: string,
@@ -169,17 +183,18 @@ async function processAmount(
   if (isNaN(cleanAmount) || cleanAmount <= 0) {
     await replyMessage(accessToken, replyToken, "กรุณาใส่ตัวเลขที่ถูกต้อง");
   }
-  const userState = userStates.get(userId)!;
+  const userState = await kv.get<UserState>(userId, "json")!;
   await insertExpend(
-    userState.tag!,
-    userState.source!,
+    userState?.tag!,
+    userState?.source!,
     cleanAmount,
-    userState.category!,
+    userState?.category!,
   );
-  userStates.delete(userId);
+  await kv.delete(userId);
 }
 
 async function processSearchStation(
+  kv: KVNamespace,
   accessToken: string,
   replyToken: string,
   userId: string,
@@ -187,7 +202,7 @@ async function processSearchStation(
 ) {
   const searchResult = await Train.processTrainStationSearch(keyword);
   if (searchResult.type === "SINGLE") {
-    Train.confirmSetStation(userId, searchResult.station);
+    Train.confirmSetStation(kv, userId, searchResult.station);
   } else if (searchResult.type === "MULTIPLE") {
     await quickReplyMessages(
       accessToken,

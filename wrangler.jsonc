@@ -18,6 +18,12 @@
       "head_sampling_rate": 1
     }
   },
+  "kv_namespaces": [
+    {
+      "binding": "KV",
+      "id": "ac12a2c6116b4acdb71266b54d0d3943"
+    }
+  ],
   "vars": {
     "APP_ENV": "dev"
   },

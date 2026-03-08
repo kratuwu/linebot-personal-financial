@@ -3,14 +3,11 @@ import sugestStation from "./sugestStations.json";
 import { searchStation } from "./station/service";
 import { Station } from "./station/model";
 
-const trainRouteStates = new Map<
-  string,
-  {
-    stage: string;
-    origin: string;
-    dest: string;
-  }
->();
+type TrainRouteState = {
+  state: "WAIT_ORIGIN" | "WAIT_DESTINATION";
+  origin: string;
+  dest: string;
+};
 
 type StationSearchResult =
   | { type: "NOT_FOUND" }
@@ -22,21 +19,21 @@ type ConfirmStationResult =
   | { type: "FLEX"; flex: any }
   | undefined;
 
-export function processSuggestPath(userId: string) {
-  trainRouteStates.set(userId, {
-    stage: "WAIT_ORIGIN",
+export async function processSuggestPath(kv: KVNamespace, userId: string) {
+  await kv.put(userId, JSON.stringify({
+    state: "WAIT_ORIGIN",
     origin: "",
     dest: "",
-  });
+  }));
   return sugestStation;
 }
 
-export function setTrainOrigin(userId: any, origin: string) {
-  trainRouteStates.set(userId, {
-    stage: "WAIT_DESTINATION",
+export async function setTrainOrigin(kv: KVNamespace, userId: any, origin: string) {
+  return kv.put(userId, JSON.stringify({
+    state: "WAIT_DESTINATION",
     origin: origin,
     dest: "",
-  });
+  }));
 }
 
 export async function processTrainStationSearch(keyword: string): Promise<StationSearchResult> {
@@ -51,22 +48,23 @@ export async function processTrainStationSearch(keyword: string): Promise<Statio
   }
 }
 
-export function confirmSetStation(
+export async function confirmSetStation(
+  kv: KVNamespace,
   userId: string,
   station: Station,
-): ConfirmStationResult {
-  const trainRouteState = trainRouteStates.get(userId)!;
-  if (trainRouteState.stage === "WAIT_ORIGIN") {
-    trainRouteStates.set(userId, {
-      stage: "WAIT_DESTINATION",
+): Promise<ConfirmStationResult> {
+  const trainRouteState = await kv.get<TrainRouteState>(userId, "json")!;
+  if (trainRouteState?.state === "WAIT_ORIGIN") {
+    await kv.put(userId, JSON.stringify({
+      state: "WAIT_DESTINATION",
       origin: station.code,
       dest: "",
-    });
+    }));
     return { type: "TEXT", text: `ต้นทาง: ${station.name_th} กรุณาใส่ปลายทาง` };
   }
-  if (trainRouteState.stage === "WAIT_DESTINATION") {
+  if (trainRouteState?.state === "WAIT_DESTINATION") {
     const origin = trainRouteState.origin;
-    trainRouteStates.delete(userId);
+    await kv.delete(userId);
 
     return { type: "FLEX", flex: getConfirmationFlex(origin, station.code) };
   }
