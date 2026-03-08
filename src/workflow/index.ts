@@ -9,7 +9,7 @@ type UserState = {
   source?: string;
 };
 
-export async function startProcessTrain(
+export async function startTrainProcess(
   kv: KVNamespace,
   accessToken: string,
   userId: any,
@@ -32,6 +32,45 @@ export async function startProcessTrain(
   );
 }
 
+export async function startProcessManual(
+  accessToken: string,
+  replyToken: string,
+  category: string,
+) {
+  await quickReplyMessages(
+    accessToken,
+    replyToken,
+    "กรุณาเลือกtag",
+    tags.map((tag) => ({
+      type: "action",
+      action: {
+        type: "postback",
+        label: tag,
+        data: `action=start&process=general&tag=${tag}&category=${category}`,
+      },
+    })),
+  );
+}
+
+export async function startGeneralProcess(
+  kv: KVNamespace,
+  accessToken: string,
+  userId: any,
+  replyToken: any,
+  tag: any,
+  category: string = "consumable",
+) {
+  await kv.put(
+    userId,
+    JSON.stringify({
+      state: "WAIT_SOURCE",
+      category,
+      tag,
+    }),
+  );
+  await replyMessage(accessToken, replyToken, "กรุณาใส่รายละเอียด");
+}
+
 export async function processTrain(
   kv: KVNamespace,
   accessToken: string,
@@ -40,7 +79,6 @@ export async function processTrain(
   params: URLSearchParams,
 ) {
   const process = params.get("process");
-  console.log(process);
   if (process === "set_route") {
     const flexMessage = Train.getConfirmationFlex(
       params.get("origin")!,
@@ -57,42 +95,41 @@ export async function processTrain(
     );
   } else if (process === "confirm_fare") {
     const replyText = `${params.get("origin")} -> ${params.get("dest")}`;
-    await replyMessage(accessToken, replyToken, "บันทึกค่าเดินทางเรียบร้อย");
+    processConfirmExpend(
+      accessToken,
+      replyToken,
+      params.get("category")!,
+      params.get("tag")!,
+      replyText,
+      parseInt(params.get("amount")!),
+    );
     await insertTransportation(replyText, parseInt(params.get("fare")!));
-    kv.delete(userId);
   } else if (process === "cancel_fare") {
     await replyMessage(accessToken, replyToken, "ยกเลิกการบันทึกค่าเดินทาง");
     kv.delete(userId);
   }
 }
 
-export async function startProcessManual(
-  kv: KVNamespace,
+export async function processGeneral(
   accessToken: string,
-  userId: string,
   replyToken: string,
-  category: string,
+  params: URLSearchParams,
 ) {
-  await kv.put(
-    userId,
-    JSON.stringify({
-      state: "WAIT_TAG",
-      category,
-    }),
-  );
-  await quickReplyMessages(
-    accessToken,
-    replyToken,
-    "กรุณาเลือกtag",
-    tags.map((tag) => ({
-      type: "action",
-      action: {
-        type: "postback",
-        label: tag,
-        data: `action=tag&tag=${tag}`,
-      },
-    })),
-  );
+  const process = params.get("process");
+  if (process === "confirm_fare") {
+    const replyText = `${params.get("origin")} -> ${params.get("dest")}`;
+    processConfirmExpend(
+      accessToken,
+      replyToken,
+      params.get("category")!,
+      params.get("tag")!,
+      replyText,
+      parseInt(params.get("amount")!),
+    );
+    await insertExpend(params.get("tag")!, replyText, parseInt(params.get("amount")!), params.get("category")!);
+  } else if (process === "cancel_fare") {
+    await replyMessage(accessToken, replyToken, "ยกเลิกการบันทึกค่าเดินทาง");
+  }
 }
 
 export async function processTextMessage(
@@ -103,10 +140,6 @@ export async function processTextMessage(
   text: string,
 ) {
   const userState = await kv.get<UserState>(userId, "json");
-  console.log({ userState });
-  if (userState?.state === "WAIT_TAG") {
-    return await processSetTag(kv, accessToken, userId, replyToken, text);
-  }
   if (userState?.state === "WAIT_SOURCE") {
     return await processSetSource(kv, accessToken, userId, replyToken, text);
   }
@@ -114,41 +147,14 @@ export async function processTextMessage(
     return await processAmount(kv, accessToken, userId, replyToken, text);
   }
   if (userState?.state === "WAIT_STATION") {
-    return await processSearchStation(kv, accessToken, replyToken, userId, text);
+    return await processSearchStation(
+      kv,
+      accessToken,
+      replyToken,
+      userId,
+      text,
+    );
   }
-}
-
-export async function startGeneralProcess(
-  kv: KVNamespace,
-  accessToken: string,
-  userId: any,
-  replyToken: any,
-  tag: any,
-) {
-  await kv.put(
-    userId,
-    JSON.stringify({
-      state: "WAIT_SOURCE",
-      category: "consumable",
-      tag: tag,
-    }),
-  );
-  await replyMessage(accessToken, replyToken, "กรุณาใส่รายละเอียด");
-}
-export async function processSetTag(
-  kv: KVNamespace,
-  accessToken: string,
-  userId: any,
-  replyToken: any,
-  tag: any,
-) {
-  const userState = await kv.get<UserState>(userId);
-  await kv.put(userId, JSON.stringify({
-    state: "WAIT_SOURCE",
-    category: userState?.category,
-    tag: tag,
-  }));
-  await replyMessage(accessToken, replyToken, "กรุณาใส่รายละเอียด");
 }
 
 async function processSetSource(
@@ -160,12 +166,15 @@ async function processSetSource(
 ) {
   const userState = await kv.get<UserState>(userId, "json")!;
 
-  await kv.put(userId, JSON.stringify({
-    state: "WAIT_AMOUNT",
-    source: text,
-    tag: userState?.tag,
-    category: userState?.category,
-  }));
+  await kv.put(
+    userId,
+    JSON.stringify({
+      state: "WAIT_AMOUNT",
+      source: text,
+      tag: userState?.tag,
+      category: userState?.category,
+    }),
+  );
   console.log(userState);
   return replyMessage(accessToken, replyToken, "กรุณาใส่จำนวนเงิน");
 }
@@ -184,12 +193,7 @@ async function processAmount(
     await replyMessage(accessToken, replyToken, "กรุณาใส่ตัวเลขที่ถูกต้อง");
   }
   const userState = await kv.get<UserState>(userId, "json")!;
-  await insertExpend(
-    userState?.tag!,
-    userState?.source!,
-    cleanAmount,
-    userState?.category!,
-  );
+  await confirmationExpend(accessToken, replyToken, userState, cleanAmount);
   await kv.delete(userId);
 }
 
@@ -217,4 +221,81 @@ async function processSearchStation(
       "ไม่พบสถานีที่ค้นหา กรุณาลองใหม่อีกครั้ง",
     );
   }
+}
+
+async function processConfirmExpend(
+  accessToken: string,
+  replyToken: string,
+  category: string,
+  tag: string,
+  source: string,
+  amount: number,
+) {
+  const replyText = `${source} ${tag} ${category} ${amount} บาท`;
+  await replyMessage(accessToken, replyToken, "บันทึกค่าใช้จ่ายเรียบร้อย");
+}
+
+async function confirmationExpend(
+  accessToken: string,
+  replyToken: string,
+  userState: UserState | null,
+  cleanAmount: number,
+) {
+  await replyFlex(accessToken, replyToken, [
+    {
+      type: "flex",
+      altText: "สรุปค่าใช้จ่าย",
+      contents: {
+        type: "bubble",
+        body: {
+          type: "box",
+          layout: "vertical",
+          contents: [
+            {
+              type: "text",
+              text: "สรุปค่าใช้จ่าย",
+              weight: "bold",
+              size: "lg",
+            },
+            {
+              type: "text",
+              text: `${userState?.source} ${userState?.tag} ${userState?.category}`,
+              margin: "md",
+            },
+            {
+              type: "text",
+              text: `${cleanAmount} บาท`,
+              weight: "bold",
+              size: "xl",
+              margin: "md",
+            },
+          ],
+        },
+        footer: {
+          type: "box",
+          layout: "horizontal",
+          contents: [
+            {
+              type: "button",
+              style: "primary",
+              action: {
+                type: "postback",
+                label: "ยืนยัน",
+                data: `action=general&process=confirm_fare&tag=${userState?.tag}&source=${userState?.source}&amount=${cleanAmount}&category=${userState?.category}`,
+              },
+            },
+            {
+              type: "button",
+              style: "secondary",
+              action: {
+                type: "postback",
+                label: "ยกเลิก",
+                data: "action=general&process=cancel_fare",
+              },
+            },
+          ],
+        },
+      },
+    },
+  ]);
 }

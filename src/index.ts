@@ -32,28 +32,21 @@ app.post("/webhook", async (c) => {
           userId,
           replyToken,
           params.get("tag"),
+          params.get("category")!,
         );
       } else if (process === "train") {
-        await WorkFlow.startProcessTrain(c.env.KV, accessToken, userId, replyToken);
+        await WorkFlow.startTrainProcess(c.env.KV, accessToken, userId, replyToken);
       } else if (process === "manual") {
         await WorkFlow.startProcessManual(
-          c.env.KV,
           accessToken,
-          userId,
           replyToken,
           params.get("category")!,
         );
       }
     } else if (action === "train") {
       await WorkFlow.processTrain(c.env.KV, accessToken, userId, replyToken, params);
-    } else if (action === "tag") {
-      await WorkFlow.processSetTag(
-        c.env.KV,
-        accessToken,
-        userId,
-        replyToken,
-        params.get("tag"),
-      );
+    } else if (action === "general") {
+      await WorkFlow.processGeneral(accessToken, replyToken, params);
     }
   } else if (type === "message" && event.message.type === "text") {
     await WorkFlow.processTextMessage(
