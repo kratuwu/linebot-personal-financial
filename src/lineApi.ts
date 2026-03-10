@@ -1,5 +1,5 @@
 export async function replyMessage(accessToken: string, replyToken: string, text: string) {
-  return fetch("https://api.line.me/v2/bot/message/reply", {
+  const resp = await fetch("https://api.line.me/v2/bot/message/reply", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -15,6 +15,7 @@ export async function replyMessage(accessToken: string, replyToken: string, text
       ],
     }),
   });
+  console.log(await resp.json())
 }
 
 export async function quickReplyMessages(
