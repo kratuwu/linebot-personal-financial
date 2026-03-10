@@ -218,6 +218,7 @@ async function processSearchStation(
   keyword: string,
 ) {
   const searchResult = await Train.processTrainStationSearch(keyword);
+  console.log(searchResult.type)
   if (searchResult.type === "SINGLE") {
     const userState = await kv.get<UserState>(userId, "json");
     const { station } = searchResult;
