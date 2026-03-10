@@ -1,34 +1,18 @@
 [
   {
-    "type": "action",
-    "action": {
-      "type": "postback",
-      "label": "ห้วยขวาง → ลุมพินี",
-      "data": "action=train&process=set_route&origin=BL18&dest=BL25"
-    }
+    "origin": "BL18",
+    "dest": "BL25"
   },
   {
-    "type": "action",
-    "action": {
-      "type": "postback",
-      "label": "ลุมพินี → ห้วยขวาง",
-      "data": "action=train&process=set_route&origin=BL25&dest=BL18"
-    }
+    "origin": "BL25",
+    "dest": "BL18"
   },
   {
-    "type": "action",
-    "action": {
-      "type": "postback",
-      "label": "ลุมพินี → สุขุมวิท",
-      "data": "action=train&process=set_route&origin=BL25&dest=BL22"
-    }
+    "origin": "BL25",
+    "dest": "BL22"
   },
   {
-    "type": "action",
-    "action": {
-      "type": "postback",
-      "label": "สุขุมวิท → ห้วยขวาง",
-      "data": "action=train&process=set_route&origin=BL22&dest=BL18"
-    }
+    "origin": "BL22",
+    "dest": "BL18"
   }
 ]

@@ -1,6 +1,3 @@
-import { is } from "drizzle-orm";
-
-// PP16 = BL10 (alias handled elsewhere)
 export const GRAPH: Record<string, string[]> = {};
 
 function connect(a: string, b: string) {
@@ -88,3 +85,41 @@ connect("PK10", "MT01");
    Connect PP11<–>PK01
 ========================= */
 connect("PP11", "PK01");
+//
+const STATION_ALIAS: Record<string, string> = {
+  BL10: "TAOPOON",
+  PP16: "TAOPOON",
+  BL15: "LARDPRAO",
+  YL01: "LARDPRAO",
+};
+
+function normalize(code: string): string {
+  return STATION_ALIAS[code] ?? code;
+}
+
+function isBlue(code: string) {
+  return code.startsWith("BL");
+}
+
+function isPurple(code: string) {
+  return code.startsWith("PP");
+}
+function isPink(code: string) {
+  return code.startsWith("PL");
+}
+function isOrange(code: string) {
+  return code.startsWith("OL");
+}
+function isYellow(code: string) {
+  return code.startsWith("YL");
+}
+
+function getLine(code: string) {
+  if (isBlue(code)) return "blue";
+  if (isPurple(code)) return "purple";
+  if (isPink(code)) return "pink";
+  if (isYellow(code)) return "yellow";
+  if (isOrange(code)) return "orange";
+  throw new Error("Unknown station code");
+}
+export {isBlue, isPurple, isPink, isYellow, isOrange, normalize, getLine};

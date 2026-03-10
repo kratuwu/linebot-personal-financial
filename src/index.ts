@@ -3,7 +3,9 @@ import * as WorkFlow from "./workflow";
 type Bindings = {
   CHANNEL_SECRET: string;
   LINE_CHANNEL_ACCESS_TOKEN: string;
-  KV: KVNamespace
+  KV: KVNamespace;
+  EXPENDE_DATABASE_ID: string;
+  NOTION_TOKEN: string;
 };
 const app = new Hono<{ Bindings: Bindings }>();
 
@@ -35,7 +37,12 @@ app.post("/webhook", async (c) => {
           params.get("category")!,
         );
       } else if (process === "train") {
-        await WorkFlow.startTrainProcess(c.env.KV, accessToken, userId, replyToken);
+        await WorkFlow.startTrainProcess(
+          c.env.KV,
+          accessToken,
+          userId,
+          replyToken,
+        );
       } else if (process === "manual") {
         await WorkFlow.startProcessManual(
           accessToken,
@@ -44,9 +51,23 @@ app.post("/webhook", async (c) => {
         );
       }
     } else if (action === "train") {
-      await WorkFlow.processTrain(c.env.KV, accessToken, userId, replyToken, params);
+      await WorkFlow.processTrain(
+        c.env.KV,
+        accessToken,
+        userId,
+        replyToken,
+        c.env.NOTION_TOKEN,
+        c.env.EXPENDE_DATABASE_ID,
+        params,
+      );
     } else if (action === "general") {
-      await WorkFlow.processGeneral(accessToken, replyToken, params);
+      await WorkFlow.processGeneral(
+        accessToken,
+        replyToken,
+        c.env.NOTION_TOKEN,
+        c.env.EXPENDE_DATABASE_ID,
+        params,
+      );
     }
   } else if (type === "message" && event.message.type === "text") {
     await WorkFlow.processTextMessage(

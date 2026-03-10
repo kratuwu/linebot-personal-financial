@@ -23,7 +23,7 @@ export async function quickReplyMessages(
   text: string,
   items: any[],
 ) {
-  return fetch("https://api.line.me/v2/bot/message/reply", {
+  const resp = await fetch("https://api.line.me/v2/bot/message/reply", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -42,6 +42,7 @@ export async function quickReplyMessages(
       ],
     }),
   });
+  console.log(await resp.json())
 }
 
 export async function replyFlex(
@@ -49,7 +50,7 @@ export async function replyFlex(
   replyToken: string,
   messages: any,
 ) {
-  await fetch("https://api.line.me/v2/bot/message/reply", {
+  const resp = await fetch("https://api.line.me/v2/bot/message/reply", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -60,4 +61,5 @@ export async function replyFlex(
       messages,
     }),
   });
+  console.log(await resp.json())
 }

@@ -5,6 +5,7 @@ import { insertExpend, insertTransportation } from "./expende";
 type UserState = {
   tag?: string;
   state: string;
+  origin?: string;
   category?: string;
   source?: string;
 };
@@ -22,14 +23,8 @@ export async function startTrainProcess(
       tag: "transportation",
     }),
   );
-  const sugestStation = await Train.processSuggestPath(kv, userId);
-  console.log(sugestStation);
-  await quickReplyMessages(
-    accessToken,
-    replyToken,
-    "เลือกรูทที่ใช้บ่อย หรือพิมพ์ต้นทางเอง",
-    sugestStation,
-  );
+  const sugestStationFlex = Train.processSuggestPath();
+  return replyFlex(accessToken, replyToken, [sugestStationFlex]);
 }
 
 export async function startProcessManual(
@@ -58,7 +53,7 @@ export async function startGeneralProcess(
   userId: any,
   replyToken: any,
   tag: any,
-  category: string = "consumable",
+  category: string,
 ) {
   await kv.put(
     userId,
@@ -76,34 +71,47 @@ export async function processTrain(
   accessToken: string,
   userId: string,
   replyToken: string,
+  notionToken: string,
+  expendeDatabaseId: string,
   params: URLSearchParams,
 ) {
   const process = params.get("process");
-  if (process === "set_route") {
-    const flexMessage = Train.getConfirmationFlex(
-      params.get("origin")!,
-      params.get("dest")!,
+  if (process === "set_origin") {
+    let userState = await kv.get<UserState>(userId, "json");
+    kv.put(
+      userId,
+      JSON.stringify({
+        ...userState,
+        origin: params.get("origin")!,
+      }),
     );
-    await replyFlex(accessToken, replyToken, [flexMessage]);
-    await kv.delete(userId);
-  } else if (process === "set_origin") {
-    await Train.setTrainOrigin(kv, userId, params.get("origin")!);
+
     await replyMessage(
       accessToken,
       replyToken,
       `ต้นทาง: ${params.get("origin")} กรุณาใส่ปลายทาง`,
     );
+  } else if (process === "set_destination") {
+    const origin = params.get("origin")!;
+    const dest = params.get("dest")!;
+    await kv.delete(userId);
+    replyFlex(accessToken, replyToken, [Train.getConfirmationFlex(origin, dest)]);
   } else if (process === "confirm_fare") {
-    const replyText = `${params.get("origin")} -> ${params.get("dest")}`;
+    const replyText = Train.getRouteText(
+      params.get("origin")!,
+      params.get("dest")!,
+    );
     processConfirmExpend(
       accessToken,
       replyToken,
-      params.get("category")!,
-      params.get("tag")!,
-      replyText,
-      parseInt(params.get("amount")!),
+      replyText + ` ค่าโดยสาร ${params.get("fare")} บาท`,
     );
-    await insertTransportation(replyText, parseInt(params.get("fare")!));
+    await insertTransportation(
+      notionToken,
+      expendeDatabaseId,
+      replyText,
+      parseInt(params.get("fare")!),
+    );
   } else if (process === "cancel_fare") {
     await replyMessage(accessToken, replyToken, "ยกเลิกการบันทึกค่าเดินทาง");
     kv.delete(userId);
@@ -113,20 +121,22 @@ export async function processTrain(
 export async function processGeneral(
   accessToken: string,
   replyToken: string,
+  notionToken: string,
+  expendeDatabaseId: string,
   params: URLSearchParams,
 ) {
   const process = params.get("process");
   if (process === "confirm_fare") {
-    const replyText = `${params.get("origin")} -> ${params.get("dest")}`;
-    processConfirmExpend(
-      accessToken,
-      replyToken,
-      params.get("category")!,
+    const replyText = `${params.get("source")} ${params.get("tag")} ${params.get("category")}`;
+    processConfirmExpend(accessToken, replyToken, replyText);
+    await insertExpend(
+      notionToken,
+      expendeDatabaseId,
       params.get("tag")!,
       replyText,
       parseInt(params.get("amount")!),
+      params.get("category")!,
     );
-    await insertExpend(params.get("tag")!, replyText, parseInt(params.get("amount")!), params.get("category")!);
   } else if (process === "cancel_fare") {
     await replyMessage(accessToken, replyToken, "ยกเลิกการบันทึกค่าเดินทาง");
   }
@@ -146,12 +156,15 @@ export async function processTextMessage(
   if (userState?.state === "WAIT_AMOUNT") {
     return await processAmount(kv, accessToken, userId, replyToken, text);
   }
-  if (userState?.state === "WAIT_STATION") {
+  if (
+    userState?.state === "WAIT_STATION"
+  ) {
     return await processSearchStation(
       kv,
       accessToken,
       replyToken,
       userId,
+      userState?.origin!,
       text,
     );
   }
@@ -175,7 +188,6 @@ async function processSetSource(
       category: userState?.category,
     }),
   );
-  console.log(userState);
   return replyMessage(accessToken, replyToken, "กรุณาใส่จำนวนเงิน");
 }
 
@@ -202,17 +214,37 @@ async function processSearchStation(
   accessToken: string,
   replyToken: string,
   userId: string,
+  origin: string,
   keyword: string,
 ) {
   const searchResult = await Train.processTrainStationSearch(keyword);
   if (searchResult.type === "SINGLE") {
-    Train.confirmSetStation(kv, userId, searchResult.station);
+    const userState = await kv.get<UserState>(userId, "json");
+    const { station } = searchResult;
+    if (!origin) {
+      await kv.put(
+        userId,
+        JSON.stringify({
+          ...userState,
+          origin: station.code,
+        }),
+      );
+      replyMessage(
+        accessToken,
+        replyToken,
+        `ต้นทาง: ${station.name_th} กรุณาใส่ปลายทาง`,
+      );
+    } else {
+      await kv.delete(userId);
+      const flexMessage = Train.getConfirmationFlex(origin, station.code);
+      replyFlex(accessToken, replyToken, [flexMessage]);
+    }
   } else if (searchResult.type === "MULTIPLE") {
     await quickReplyMessages(
       accessToken,
       replyToken,
-      "พบสถานีที่ตรงกับคำค้นหา กรุณาเลือกสถานีต้นทาง",
-      Train.getQuickReplyStations(searchResult.stations),
+      "พบสถานีที่ตรงกับคำค้นหา กรุณาเลือกสถานี",
+      Train.getQuickReplyStations(searchResult.stations, origin),
     );
   } else {
     await replyMessage(
@@ -226,13 +258,13 @@ async function processSearchStation(
 async function processConfirmExpend(
   accessToken: string,
   replyToken: string,
-  category: string,
-  tag: string,
   source: string,
-  amount: number,
 ) {
-  const replyText = `${source} ${tag} ${category} ${amount} บาท`;
-  await replyMessage(accessToken, replyToken, "บันทึกค่าใช้จ่ายเรียบร้อย");
+  await replyMessage(
+    accessToken,
+    replyToken,
+    "บันทึกค่าใช้จ่ายเรียบร้อย" + "\n" + source,
+  );
 }
 
 async function confirmationExpend(
