@@ -230,7 +230,7 @@ async function processSearchStation(
           origin: station.code,
         }),
       );
-      replyMessage(
+      await replyMessage(
         accessToken,
         replyToken,
         `ต้นทาง: ${station.name_th} กรุณาใส่ปลายทาง`,
@@ -238,7 +238,7 @@ async function processSearchStation(
     } else {
       await kv.delete(userId);
       const flexMessage = Train.getConfirmationFlex(origin, station.code);
-      replyFlex(accessToken, replyToken, [flexMessage]);
+      await replyFlex(accessToken, replyToken, [flexMessage]);
     }
   } else if (searchResult.type === "MULTIPLE") {
     await quickReplyMessages(
