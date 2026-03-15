@@ -78,7 +78,7 @@ export async function processTrain(
   const process = params.get("process");
   if (process === "set_origin") {
     let userState = await kv.get<UserState>(userId, "json");
-    kv.put(
+    await kv.put(
       userId,
       JSON.stringify({
         ...userState,
@@ -95,13 +95,13 @@ export async function processTrain(
     const origin = params.get("origin")!;
     const dest = params.get("dest")!;
     await kv.delete(userId);
-    replyFlex(accessToken, replyToken, [Train.getConfirmationFlex(origin, dest)]);
+    await replyFlex(accessToken, replyToken, [Train.getConfirmationFlex(origin, dest)]);
   } else if (process === "confirm_fare") {
     const replyText = Train.getRouteText(
       params.get("origin")!,
       params.get("dest")!,
     );
-    processConfirmExpend(
+    await processConfirmExpend(
       accessToken,
       replyToken,
       replyText + ` ค่าโดยสาร ${params.get("fare")} บาท`,
@@ -114,7 +114,7 @@ export async function processTrain(
     );
   } else if (process === "cancel_fare") {
     await replyMessage(accessToken, replyToken, "ยกเลิกการบันทึกค่าเดินทาง");
-    kv.delete(userId);
+    await kv.delete(userId);
   }
 }
 
@@ -128,7 +128,7 @@ export async function processGeneral(
   const process = params.get("process");
   if (process === "confirm_fare") {
     const replyText = `${params.get("source")} ${params.get("tag")} ${params.get("category")}`;
-    processConfirmExpend(accessToken, replyToken, params.get("source")!);
+    await processConfirmExpend(accessToken, replyToken, params.get("source")!);
     await insertExpend(
       notionToken,
       expendeDatabaseId,
@@ -151,15 +151,15 @@ export async function processTextMessage(
 ) {
   const userState = await kv.get<UserState>(userId, "json");
   if (userState?.state === "WAIT_SOURCE") {
-    return await processSetSource(kv, accessToken, userId, replyToken, text);
+    processSetSource(kv, accessToken, userId, replyToken, text);
   }
   if (userState?.state === "WAIT_AMOUNT") {
-    return await processAmount(kv, accessToken, userId, replyToken, text);
+    processAmount(kv, accessToken, userId, replyToken, text);
   }
   if (
     userState?.state === "WAIT_STATION"
   ) {
-    return await processSearchStation(
+    processSearchStation(
       kv,
       accessToken,
       replyToken,
@@ -188,7 +188,7 @@ async function processSetSource(
       category: userState?.category,
     }),
   );
-  return replyMessage(accessToken, replyToken, "กรุณาใส่จำนวนเงิน");
+  replyMessage(accessToken, replyToken, "กรุณาใส่จำนวนเงิน");
 }
 
 async function processAmount(
@@ -260,7 +260,7 @@ async function processConfirmExpend(
   replyToken: string,
   source: string,
 ) {
-  await replyMessage(
+  return replyMessage(
     accessToken,
     replyToken,
     "บันทึกค่าใช้จ่ายเรียบร้อย" + "\n" + source,
