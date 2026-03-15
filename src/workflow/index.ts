@@ -35,7 +35,7 @@ export async function startProcessManual(
   await quickReplyMessages(
     accessToken,
     replyToken,
-    "กรุณาเลือกtag",
+    "กรุณาเลือก tag",
     tags.map((tag) => ({
       type: "action",
       action: {
