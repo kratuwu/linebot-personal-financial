@@ -2,6 +2,7 @@ export type Station = {
   id: number;
   code: string;
   name_th: string;
+  label_th?: string;
   name_en: string;
   type: string;
   line_id: number;

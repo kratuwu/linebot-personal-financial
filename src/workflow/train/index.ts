@@ -16,8 +16,8 @@ export function processSuggestPath() {
       type: "carousel",
       contents: sugestStation.map((route) => {
         const paths = calculateFare(route.origin, route.dest);
-        const originName = searchByCode(route.origin).name_th;
-        const destName = searchByCode(route.dest).name_th;
+        const originName = searchByCode(route.origin).label_th;
+        const destName = searchByCode(route.dest).label_th;
         return {
           type: "bubble",
           size: "mega",
