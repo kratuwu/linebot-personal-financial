@@ -128,7 +128,7 @@ export async function processGeneral(
   const process = params.get("process");
   if (process === "confirm_fare") {
     const replyText = `${params.get("source")} ${params.get("tag")} ${params.get("category")}`;
-    processConfirmExpend(accessToken, replyToken, replyText);
+    processConfirmExpend(accessToken, replyToken, params.get("source")!);
     await insertExpend(
       notionToken,
       expendeDatabaseId,
@@ -218,7 +218,6 @@ async function processSearchStation(
   keyword: string,
 ) {
   const searchResult = await Train.processTrainStationSearch(keyword);
-  console.log(searchResult.type)
   if (searchResult.type === "SINGLE") {
     const userState = await kv.get<UserState>(userId, "json");
     const { station } = searchResult;
@@ -292,7 +291,7 @@ async function confirmationExpend(
             },
             {
               type: "text",
-              text: `${userState?.source} ${userState?.tag} ${userState?.category}`,
+              text: `${userState?.source}`,
               margin: "md",
             },
             {
