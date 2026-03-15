@@ -151,15 +151,15 @@ export async function processTextMessage(
 ) {
   const userState = await kv.get<UserState>(userId, "json");
   if (userState?.state === "WAIT_SOURCE") {
-    processSetSource(kv, accessToken, userId, replyToken, text);
+    return processSetSource(kv, accessToken, userId, replyToken, text);
   }
   if (userState?.state === "WAIT_AMOUNT") {
-    processAmount(kv, accessToken, userId, replyToken, text);
+    return processAmount(kv, accessToken, userId, replyToken, text);
   }
   if (
     userState?.state === "WAIT_STATION"
   ) {
-    processSearchStation(
+    return processSearchStation(
       kv,
       accessToken,
       replyToken,
