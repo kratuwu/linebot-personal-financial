@@ -16,10 +16,8 @@ export function processSuggestPath() {
       type: "carousel",
       contents: sugestStation.map((route) => {
         const paths = calculateFare(route.origin, route.dest);
-        const origin = searchByCode(route.origin);
-        const originName = origin.label_th || origin.name_th;
-        const dest = searchByCode(route.dest);
-        const destName = dest.label_th || dest.name_th;
+        const originName = searchByCode(route.origin).name_th;
+        const destName = searchByCode(route.dest).name_th;
         return {
           type: "bubble",
           size: "mega",
@@ -127,12 +125,12 @@ export function getQuickReplyStations(stations: Station[], origin: string) {
   const process = origin ? "set_destination" : "set_origin";
   const getOrigin = (code: string) => (origin ? origin : code);
   const getDest = (code: string) => (origin ? code : null);
-  console.log(stations)
+  
   return stations.map((s: Station) => ({
     type: "action",
     action: {
       type: "postback",
-      label: s.name_th,
+      label: s.label_th || s.name_th,
       data: `action=train&process=${process}&origin=${getOrigin(s.code)}&dest=${getDest(s.code)}`,
     },
   }));
