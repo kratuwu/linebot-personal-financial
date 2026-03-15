@@ -188,7 +188,7 @@ async function processSetSource(
       category: userState?.category,
     }),
   );
-  replyMessage(accessToken, replyToken, "กรุณาใส่จำนวนเงิน");
+  return replyMessage(accessToken, replyToken, "กรุณาใส่จำนวนเงิน");
 }
 
 async function processAmount(
