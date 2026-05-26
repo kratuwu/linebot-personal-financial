@@ -140,33 +140,86 @@ export function getQuickReplyStations(stations: Station[], origin: string) {
 }
 
 export const getConfirmationFlex = (origin: string, dest: string) => {
-  const { fare } = calculateFare(origin, dest);
+  const paths = calculateFare(origin, dest);
+  const originName = searchByCode(origin).name_th;
+  const destName = searchByCode(dest).name_th;
+
   return {
     type: "flex",
     altText: "สรุปค่าเดินทาง",
     contents: {
       type: "bubble",
+      size: "mega",
+      header: {
+        type: "box",
+        layout: "horizontal",
+        contents: [
+          {
+            type: "box",
+            layout: "vertical",
+            contents: [
+              {
+                type: "text",
+                text: "FROM",
+                color: "#ffffff66",
+                size: "sm",
+              },
+              {
+                type: "text",
+                text: originName,
+                color: "#ffffff",
+                size: "xl",
+                flex: 4,
+                weight: "bold",
+              },
+            ],
+          },
+          {
+            type: "box",
+            layout: "vertical",
+            contents: [
+              {
+                type: "text",
+                text: "TO",
+                color: "#ffffff66",
+                size: "sm",
+              },
+              {
+                type: "text",
+                text: destName,
+                color: "#ffffff",
+                size: "xl",
+                flex: 4,
+                weight: "bold",
+              },
+            ],
+          },
+        ],
+        paddingAll: "20px",
+        backgroundColor: "#0367D3",
+        spacing: "md",
+        height: "100px",
+        paddingTop: "22px",
+      },
       body: {
         type: "box",
         layout: "vertical",
         contents: [
           {
             type: "text",
-            text: "🚆 ค่าเดินทาง",
+            text: "Fare",
+            color: "#000000",
+            size: "md",
             weight: "bold",
-            size: "lg",
           },
+          ...buildFlex(originName, destName, paths.pathes),
           {
             type: "text",
-            text: `${searchByCode(origin).name_th} → ${searchByCode(dest).name_th}`,
-            margin: "md",
-          },
-          {
-            type: "text",
-            text: `${fare} บาท`,
+            text: `${paths.fare} บาท`,
             weight: "bold",
             size: "xl",
             margin: "md",
+            align: "end",
           },
         ],
       },
@@ -186,7 +239,7 @@ export const getConfirmationFlex = (origin: string, dest: string) => {
                 "&dest=" +
                 dest +
                 "&fare=" +
-                fare,
+                paths.fare,
             },
           },
           {
