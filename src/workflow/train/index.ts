@@ -1,7 +1,10 @@
-import { calculateFare } from "./fare/fareEngine";
+import {
+  calculateFare,
+  searchByCode,
+  searchStation,
+  type Station,
+} from "bangkok-train-fare";
 import sugestStation from "./sugestStations.json";
-import { searchByCode, searchStation } from "./station/service";
-import { Station } from "./station/model";
 
 type StationSearchResult =
   | { type: "NOT_FOUND" }
