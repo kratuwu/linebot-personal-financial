@@ -59,3 +59,29 @@ export function transferDiscount(toLine: string): number {
  if (toLine === "PU") return -15;
  return 0;
 }
+export function greenFare(distance: number): number {
+  if (distance === 0) return 17;
+  if (distance === 1) return 17;
+  if (distance === 2) return 25;
+  if (distance === 3) return 28;
+  if (distance === 4) return 32;
+  if (distance === 5) return 35;
+  if (distance === 6) return 40;
+  if (distance === 7) return 43;
+  return 47;
+}
+export function extendedGreenFare(distance: number): number {
+  if (distance === 0) return 17;
+  if (distance === 1) return 17;
+  if (distance === 2) return 22;
+  if (distance === 3) return 24;
+  if (distance === 4) return 27;
+  if (distance === 5) return 29;
+  if (distance === 6) return 32;
+  if (distance === 7) return 34;
+  if (distance === 7) return 37;
+  if (distance === 7) return 39;
+  if (distance === 7) return 42;
+  if (distance === 7) return 44;
+  return 45;
+}
