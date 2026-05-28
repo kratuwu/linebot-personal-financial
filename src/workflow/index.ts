@@ -1,4 +1,5 @@
 import { quickReplyMessages, replyFlex, replyMessage } from "../lineApi";
+import { parseGrabExpense } from "./grab";
 import * as Train from "./train";
 import tags from "./tags.json";
 import { insertExpend, insertTransportation } from "./expende";
@@ -134,7 +135,7 @@ export async function processGeneral(
       expendeDatabaseId,
       params.get("tag")!,
       replyText,
-      parseInt(params.get("amount")!),
+      Number(params.get("amount")!),
       params.get("category")!,
     );
   } else if (process === "cancel_fare") {
@@ -166,6 +167,16 @@ export async function processTextMessage(
       userId,
       userState?.origin!,
       text,
+    );
+  }
+
+  const grabExpense = parseGrabExpense(text);
+  if (grabExpense) {
+    return confirmationExpend(
+      accessToken,
+      replyToken,
+      grabExpense,
+      grabExpense.amount,
     );
   }
 }
@@ -270,7 +281,7 @@ async function processConfirmExpend(
 async function confirmationExpend(
   accessToken: string,
   replyToken: string,
-  userState: UserState | null,
+  userState: Pick<UserState, "source" | "tag" | "category"> | null,
   cleanAmount: number,
 ) {
   await replyFlex(accessToken, replyToken, [
@@ -313,7 +324,7 @@ async function confirmationExpend(
               action: {
                 type: "postback",
                 label: "ยืนยัน",
-                data: `action=general&process=confirm_fare&tag=${userState?.tag}&source=${userState?.source}&amount=${cleanAmount}&category=${userState?.category}`,
+                data: buildGeneralConfirmData(userState, cleanAmount),
               },
             },
             {
@@ -330,4 +341,18 @@ async function confirmationExpend(
       },
     },
   ]);
+}
+
+function buildGeneralConfirmData(
+  userState: Pick<UserState, "source" | "tag" | "category"> | null,
+  amount: number,
+) {
+  return new URLSearchParams({
+    action: "general",
+    process: "confirm_fare",
+    tag: userState?.tag ?? "",
+    source: userState?.source ?? "",
+    amount: amount.toString(),
+    category: userState?.category ?? "",
+  }).toString();
 }
