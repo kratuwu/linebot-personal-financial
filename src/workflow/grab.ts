@@ -139,29 +139,112 @@ function getTag(service: string) {
 }
 
 function buildSource(text: string, service: string) {
-  const merchant = parseMerchant(text);
-  if (merchant) {
-    return `${service} - ${merchant}`;
+  const origin = parseOrigin(text);
+  const destination = parseDestination(text);
+
+  if (origin && destination && isTransportationService(service)) {
+    return `${service} - ${origin} to ${destination}`;
+  }
+
+  if (origin) {
+    return `${service} - ${origin}`;
   }
 
   return service;
 }
 
-function parseMerchant(text: string) {
-  const merchantPatterns = [
-    /(?:merchant|restaurant|store|ร้าน)\s*:?\s*(.+)/i,
-    /(?:from|จาก)\s*:?\s*(.+)/i,
-  ];
+function parseOrigin(text: string) {
+  return parseLabeledValue(text, [
+    "origin",
+    "pickup",
+    "pick-up",
+    "picked up from",
+    "merchant",
+    "restaurant",
+    "store",
+    "order from",
+    "from",
+    "ต้นทาง",
+    "จุดรับ",
+    "ร้าน",
+    "จาก",
+  ]);
+}
 
-  for (const pattern of merchantPatterns) {
-    const match = text.match(pattern);
-    const merchant = match?.[1]?.trim();
-    if (merchant && !parseFirstAmount(merchant)) {
-      return merchant.slice(0, 80);
+function parseDestination(text: string) {
+  return parseLabeledValue(text, [
+    "destination",
+    "drop off",
+    "drop-off",
+    "dropped off at",
+    "to",
+    "ปลายทาง",
+    "จุดส่ง",
+    "ถึง",
+  ]);
+}
+
+function parseLabeledValue(text: string, labels: string[]) {
+  const lines = text
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+  for (let index = 0; index < lines.length; index++) {
+    const inlineValue = parseInlineLabeledValue(lines[index], labels);
+    const value = inlineValue ?? parseNextLineLabeledValue(lines, index, labels);
+    if (value && isValidSourceValue(value)) {
+      return value.slice(0, 80);
     }
   }
 
   return null;
+}
+
+function parseInlineLabeledValue(line: string, labels: string[]) {
+  for (const label of labels) {
+    const pattern = new RegExp(`^${escapeRegExp(label)}\\s*:?\\s*(.+)$`, "i");
+    const match = line.match(pattern);
+    const value = match?.[1]?.trim();
+    if (value) {
+      return value;
+    }
+  }
+
+  return null;
+}
+
+function parseNextLineLabeledValue(
+  lines: string[],
+  index: number,
+  labels: string[],
+) {
+  const line = lines[index];
+  if (!labels.some((label) => line.toLowerCase() === label.toLowerCase())) {
+    return null;
+  }
+
+  return lines[index + 1]?.trim() || null;
+}
+
+function isValidSourceValue(value: string) {
+  if (/^(?:฿|THB)?\s*[0-9][0-9,]*(?:\.\d{1,2})?\s*(?:บาท)?$/i.test(value)) {
+    return false;
+  }
+
+  if (value.includes("@") || /<[^>]+>/.test(value)) {
+    return false;
+  }
+
+  return !/^grab\b/i.test(value);
+}
+
+function isTransportationService(service: string) {
+  return !["GrabFood", "GrabMart"].includes(service);
+}
+
+function escapeRegExp(value: string) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 function parseReferenceId(text: string) {

@@ -46,6 +46,40 @@ describe("parseGrabExpense", () => {
     expect(result?.referenceId).toBe("A-123ABC");
   });
 
+  it("uses origin as the source when present", () => {
+    const result = parseGrabExpense(`
+      GrabFood
+      Origin: McDonald's Samyan Mitrtown
+      Total paid ฿149
+    `);
+
+    expect(result?.source).toBe("GrabFood - McDonald's Samyan Mitrtown");
+  });
+
+  it("uses origin and destination for ride sources", () => {
+    const result = parseGrabExpense(`
+      GrabCar
+      Origin
+      Home
+      Destination
+      Central Rama 9
+      Fare: THB 132
+    `);
+
+    expect(result?.source).toBe("GrabCar - Home to Central Rama 9");
+  });
+
+  it("does not use email sender lines as merchant source", () => {
+    const result = parseGrabExpense(`
+      From: Grab <no-reply@grab.com>
+      GrabFood
+      Booking code: A-9DXW3G3WWP8SAV
+      Total paid ฿44
+    `);
+
+    expect(result?.source).toBe("GrabFood");
+  });
+
   it("parses a numeric receipt date", () => {
     const result = parseGrabExpense(`
       GrabCar

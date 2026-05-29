@@ -56,9 +56,7 @@ app.post("/grab/webhook", async (c) => {
     });
   }
 
-  const source = [expense.source, expense.referenceId]
-    .filter(Boolean)
-    .join(" ");
+  const source = expense.source;
 
   let page;
   try {
