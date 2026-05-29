@@ -25,6 +25,15 @@ const GRAB_SERVICES = [
   "Grab",
 ];
 
+const COFFEE_KEYWORDS = [
+  "coffee",
+  "cafe",
+  "café",
+  "กาแฟ",
+  "starbucks",
+  "amazon",
+];
+
 export function buildGrabExpense(input: StructuredGrabExpense): GrabExpense | null {
   const service = normalizeGrabService(input.service);
   if (!service || !input.amount || input.amount <= 0) {
@@ -34,7 +43,7 @@ export function buildGrabExpense(input: StructuredGrabExpense): GrabExpense | nu
   return {
     source: buildSource(service, input.source),
     amount: input.amount,
-    tag: getTag(service),
+    tag: getTag(service, input.source),
     category: "Consumable",
     referenceId: input.referenceId,
     date: input.date,
@@ -52,10 +61,16 @@ function normalizeGrabService(service?: string) {
   ) ?? null;
 }
 
-function getTag(service: string) {
+function getTag(service: string, source?: string) {
+  if (isCoffeeSource(source)) return "Coffee";
   if (service === "GrabFood") return "Dining Out";
   if (service === "GrabMart") return "Dining Out";
   return "Transportation";
+}
+
+function isCoffeeSource(source?: string) {
+  const lowerSource = source?.toLowerCase() ?? "";
+  return COFFEE_KEYWORDS.some((keyword) => lowerSource.includes(keyword));
 }
 
 function buildSource(service: string, source?: string) {

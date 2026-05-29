@@ -36,6 +36,19 @@ describe("buildGrabExpense", () => {
     });
   });
 
+  it("uses Coffee tag for coffee-related sources", () => {
+    const result = buildGrabExpense({
+      service: "GrabFood",
+      source: "Bluekoff Coffee",
+      amount: 95,
+    });
+
+    expect(result).toMatchObject({
+      source: "GrabFood - Bluekoff Coffee",
+      tag: "Coffee",
+    });
+  });
+
   it("does not double-prefix the source", () => {
     const result = buildGrabExpense({
       service: "GrabFood",
