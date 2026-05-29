@@ -15,7 +15,6 @@ const app = new Hono<{ Bindings: Bindings }>();
 app.post("/grab/webhook", async (c) => {
   const payload = await c.req.json<{
     text?: string;
-    html?: string;
     subject?: string;
     secret?: string;
   }>();
@@ -32,11 +31,7 @@ app.post("/grab/webhook", async (c) => {
     );
   }
 
-  const receiptText = [
-    payload.subject,
-    payload.text,
-    payload.html ? htmlToText(payload.html) : null,
-  ].filter(Boolean).join("\n");
+  const receiptText = [payload.subject, payload.text].filter(Boolean).join("\n");
   const expense = parseGrabExpense(receiptText);
   if (!expense) {
     return c.json(
@@ -181,35 +176,4 @@ async function sha256(text: string) {
   return [...new Uint8Array(hash)]
     .map((byte) => byte.toString(16).padStart(2, "0"))
     .join("");
-}
-
-function htmlToText(html: string) {
-  return decodeHtmlEntities(
-    html
-      .replace(/<style[\s\S]*?<\/style>/gi, " ")
-      .replace(/<script[\s\S]*?<\/script>/gi, " ")
-      .replace(/<br\s*\/?>/gi, "\n")
-      .replace(/<\/(?:p|div|tr|td|th|li|h[1-6])>/gi, "\n")
-      .replace(/<[^>]+>/g, " ")
-      .replace(/[ \t]+/g, " ")
-      .replace(/\n\s+/g, "\n")
-      .replace(/\n{3,}/g, "\n\n")
-      .trim(),
-  );
-}
-
-function decodeHtmlEntities(text: string) {
-  const entities: Record<string, string> = {
-    amp: "&",
-    lt: "<",
-    gt: ">",
-    quot: '"',
-    apos: "'",
-    nbsp: " ",
-  };
-
-  return text
-    .replace(/&#(\d+);/g, (_, code) => String.fromCharCode(Number(code)))
-    .replace(/&#x([0-9a-f]+);/gi, (_, code) => String.fromCharCode(parseInt(code, 16)))
-    .replace(/&([a-z]+);/gi, (entity, name) => entities[name.toLowerCase()] ?? entity);
 }
