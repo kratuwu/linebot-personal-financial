@@ -47,6 +47,7 @@ app.post("/grab/webhook", async (c) => {
     source,
     expense.amount,
     expense.category,
+    expense.date,
   );
   await c.env.KV.put(dedupeKey, JSON.stringify(expense), {
     expirationTtl: 60 * 60 * 24 * 90,

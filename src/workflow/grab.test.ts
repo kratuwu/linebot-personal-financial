@@ -16,6 +16,7 @@ describe("parseGrabExpense", () => {
       tag: "Dining Out",
       category: "Consumable",
       referenceId: undefined,
+      date: undefined,
     });
   });
 
@@ -31,6 +32,7 @@ describe("parseGrabExpense", () => {
       tag: "Transportation",
       category: "Consumable",
       referenceId: undefined,
+      date: undefined,
     });
   });
 
@@ -42,6 +44,27 @@ describe("parseGrabExpense", () => {
     `);
 
     expect(result?.referenceId).toBe("A-123ABC");
+  });
+
+  it("parses a numeric receipt date", () => {
+    const result = parseGrabExpense(`
+      GrabCar
+      Date: 28/05/2026
+      Fare: THB 87
+    `);
+
+    expect(result?.date).toBe("2026-05-28");
+  });
+
+  it("parses an English month receipt date", () => {
+    const result = parseGrabExpense(`
+      GrabFood
+      Order date
+      29 May 2026
+      Total paid ฿120
+    `);
+
+    expect(result?.date).toBe("2026-05-29");
   });
 
   it("ignores text that is not from Grab", () => {

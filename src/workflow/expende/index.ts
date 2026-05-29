@@ -1,10 +1,16 @@
 import { Client } from "@notionhq/client";
+import {
+  toBangkokDate,
+  toBangkokDateString,
+  toBangkokMonthName,
+} from "../../utils/date";
 
 export async function insertTransportation(
   notionToken: string,
   expendeDatabaseId: string,
   source: string,
   amount: number,
+  expenseDate?: string,
 ) {
   await insertExpend(
     notionToken,
@@ -13,6 +19,7 @@ export async function insertTransportation(
     source,
     amount,
     "Consumable",
+    expenseDate,
   );
 }
 
@@ -23,16 +30,17 @@ export async function insertExpend(
   source: string,
   amount: number,
   category: string,
+  expenseDate?: string,
 ) {
   const notion = new Client({
     auth: notionToken,
     fetch: fetch.bind(globalThis),
   });
 
-  const now = new Date();
+  const now = toBangkokDate(expenseDate);
 
-  const date = now.toISOString().split("T")[0]; // 2026-03-08
-  const month = now.toLocaleString("en-US", { month: "long" }); // March
+  const date = toBangkokDateString(now);
+  const month = toBangkokMonthName(now);
 
   return notion.pages.create({
     parent: {

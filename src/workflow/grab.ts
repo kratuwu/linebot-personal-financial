@@ -1,9 +1,12 @@
+import { parseDateFromText } from "../utils/date";
+
 type GrabExpense = {
   source: string;
   amount: number;
   tag: string;
   category: string;
   referenceId?: string;
+  date?: string;
 };
 
 const GRAB_KEYWORDS = [
@@ -46,6 +49,7 @@ export function parseGrabExpense(text: string): GrabExpense | null {
     tag: getTag(service),
     category: "Consumable",
     referenceId: parseReferenceId(text),
+    date: parseReceiptDate(text),
   };
 }
 
@@ -174,4 +178,48 @@ function parseReferenceId(text: string) {
   }
 
   return undefined;
+}
+
+function parseReceiptDate(text: string) {
+  const labeledDate = parseLabeledDate(text);
+  if (labeledDate) {
+    return labeledDate;
+  }
+
+  return parseAnyDate(text) ?? undefined;
+}
+
+function parseLabeledDate(text: string) {
+  const lines = text
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+  const labels = [
+    "date",
+    "order date",
+    "booking date",
+    "receipt date",
+    "วันที่",
+    "วันที่สั่งซื้อ",
+    "วันที่ใช้บริการ",
+  ];
+
+  for (let index = 0; index < lines.length; index++) {
+    const line = lines[index];
+    if (!labels.some((label) => line.toLowerCase().includes(label))) {
+      continue;
+    }
+
+    const date = parseDateFromText(line) ?? parseDateFromText(lines[index + 1] ?? "");
+    if (date) {
+      return date;
+    }
+  }
+
+  return null;
+}
+
+function parseAnyDate(text: string) {
+  return parseDateFromText(text);
 }
