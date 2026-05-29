@@ -24,36 +24,78 @@ app.post("/grab/webhook", async (c) => {
     return c.text("unauthorized", 401);
   }
 
+  if (!c.env.NOTION_TOKEN || !c.env.EXPENDE_DATABASE_ID) {
+    return c.json(
+      { ok: false, error: "Missing Notion Worker configuration" },
+      500,
+    );
+  }
+
   const receiptText = [payload.subject, payload.text].filter(Boolean).join("\n");
   const expense = parseGrabExpense(receiptText);
   if (!expense) {
-    return c.json({ ok: false, error: "Cannot parse Grab expense" }, 422);
+    return c.json(
+      {
+        ok: false,
+        error: "Cannot parse Grab expense",
+        subject: payload.subject,
+      },
+      422,
+    );
   }
 
   const dedupeKey = `grab:${expense.referenceId ?? await sha256(receiptText)}`;
   const existingExpense = await c.env.KV.get(dedupeKey);
   if (existingExpense) {
-    return c.json({ ok: true, skipped: true, expense });
+    return c.json({
+      ok: true,
+      inserted: false,
+      skipped: true,
+      reason: "duplicate",
+      expense,
+    });
   }
 
   const source = [expense.source, expense.referenceId]
     .filter(Boolean)
     .join(" ");
 
-  await insertExpend(
-    c.env.NOTION_TOKEN,
-    c.env.EXPENDE_DATABASE_ID,
-    expense.tag,
-    source,
-    expense.amount,
-    expense.category,
-    expense.date,
-  );
+  let page;
+  try {
+    page = await insertExpend(
+      c.env.NOTION_TOKEN,
+      c.env.EXPENDE_DATABASE_ID,
+      expense.tag,
+      source,
+      expense.amount,
+      expense.category,
+      expense.date,
+    );
+  } catch (error) {
+    console.error("Failed to save Grab expense to Notion", error);
+    return c.json(
+      {
+        ok: false,
+        error: "Failed to save Grab expense to Notion",
+        expense,
+      },
+      500,
+    );
+  }
+
   await c.env.KV.put(dedupeKey, JSON.stringify(expense), {
     expirationTtl: 60 * 60 * 24 * 90,
   });
 
-  return c.json({ ok: true, expense });
+  return c.json({
+    ok: true,
+    inserted: true,
+    notionPageId: page.id,
+    expense: {
+      ...expense,
+      source,
+    },
+  });
 });
 
 app.post("/webhook", async (c) => {
