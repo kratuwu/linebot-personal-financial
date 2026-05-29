@@ -9,6 +9,12 @@ type GrabExpense = {
   date?: string;
 };
 
+type GrabExpenseOverrides = {
+  amount?: number;
+  referenceId?: string;
+  date?: string;
+};
+
 const GRAB_KEYWORDS = [
   "grab",
   "grabfood",
@@ -32,12 +38,15 @@ const AMOUNT_LABELS = [
   "รวม",
 ];
 
-export function parseGrabExpense(text: string): GrabExpense | null {
+export function parseGrabExpense(
+  text: string,
+  overrides: GrabExpenseOverrides = {},
+): GrabExpense | null {
   if (!looksLikeGrab(text)) {
     return null;
   }
 
-  const amount = parseAmount(text);
+  const amount = overrides.amount ?? parseAmount(text);
   if (!amount) {
     return null;
   }
@@ -48,8 +57,8 @@ export function parseGrabExpense(text: string): GrabExpense | null {
     amount,
     tag: getTag(service),
     category: "Consumable",
-    referenceId: parseReferenceId(text),
-    date: parseReceiptDate(text),
+    referenceId: overrides.referenceId ?? parseReferenceId(text),
+    date: overrides.date ?? parseReceiptDate(text),
   };
 }
 
@@ -166,6 +175,7 @@ function parseOrigin(text: string) {
     "from",
     "ต้นทาง",
     "จุดรับ",
+    "สถานที่เริ่มต้นการเดินทาง",
     "ร้าน",
     "จาก",
   ]);

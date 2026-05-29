@@ -15,6 +15,10 @@ const app = new Hono<{ Bindings: Bindings }>();
 app.post("/grab/webhook", async (c) => {
   const payload = await c.req.json<{
     text?: string;
+    source?: string;
+    amount?: number | string;
+    date?: string;
+    referenceId?: string;
     subject?: string;
     secret?: string;
   }>();
@@ -31,8 +35,13 @@ app.post("/grab/webhook", async (c) => {
     );
   }
 
-  const receiptText = [payload.subject, payload.text].filter(Boolean).join("\n");
-  const expense = parseGrabExpense(receiptText);
+  const receiptText = payload.text ?? "";
+  const amount = toOptionalAmount(payload.amount);
+  const expense = parseGrabExpense(receiptText, {
+    amount,
+    date: payload.date,
+    referenceId: payload.referenceId,
+  });
   if (!expense) {
     return c.json(
       {
@@ -44,6 +53,12 @@ app.post("/grab/webhook", async (c) => {
     );
   }
 
+  const source = buildExpenseSource(expense.source, payload.source);
+  const savedExpense = {
+    ...expense,
+    source,
+  };
+
   const dedupeKey = `grab:${expense.referenceId ?? await sha256(receiptText)}`;
   const existingExpense = await c.env.KV.get(dedupeKey);
   if (existingExpense) {
@@ -52,11 +67,9 @@ app.post("/grab/webhook", async (c) => {
       inserted: false,
       skipped: true,
       reason: "duplicate",
-      expense,
+      expense: savedExpense,
     });
   }
-
-  const source = expense.source;
 
   let page;
   try {
@@ -75,13 +88,13 @@ app.post("/grab/webhook", async (c) => {
       {
         ok: false,
         error: "Failed to save Grab expense to Notion",
-        expense,
+        expense: savedExpense,
       },
       500,
     );
   }
 
-  await c.env.KV.put(dedupeKey, JSON.stringify(expense), {
+  await c.env.KV.put(dedupeKey, JSON.stringify(savedExpense), {
     expirationTtl: 60 * 60 * 24 * 90,
   });
 
@@ -89,10 +102,7 @@ app.post("/grab/webhook", async (c) => {
     ok: true,
     inserted: true,
     notionPageId: page.id,
-    expense: {
-      ...expense,
-      source,
-    },
+    expense: savedExpense,
   });
 });
 
@@ -176,4 +186,32 @@ async function sha256(text: string) {
   return [...new Uint8Array(hash)]
     .map((byte) => byte.toString(16).padStart(2, "0"))
     .join("");
+}
+
+function buildExpenseSource(parsedSource: string, overrideSource?: string) {
+  const cleanOverride = overrideSource?.trim();
+  if (!cleanOverride) {
+    return parsedSource;
+  }
+
+  const service = parsedSource.split(" - ")[0];
+  if (cleanOverride.toLowerCase().startsWith(service.toLowerCase())) {
+    return cleanOverride;
+  }
+
+  return `${service} - ${cleanOverride}`;
+}
+
+function toOptionalAmount(amount: number | string | undefined) {
+  if (amount === undefined || amount === null || amount === "") {
+    return undefined;
+  }
+
+  const numericAmount = typeof amount === "number"
+    ? amount
+    : Number(amount.replace(/[^\d.]/g, ""));
+
+  return Number.isFinite(numericAmount) && numericAmount > 0
+    ? numericAmount
+    : undefined;
 }

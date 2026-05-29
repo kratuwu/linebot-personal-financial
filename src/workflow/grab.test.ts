@@ -56,6 +56,17 @@ describe("parseGrabExpense", () => {
     expect(result?.source).toBe("GrabFood - McDonald's Samyan Mitrtown");
   });
 
+  it("uses Thai trip start location as the source", () => {
+    const result = parseGrabExpense(`
+      GrabFood
+      สถานที่เริ่มต้นการเดินทาง
+      KFC Central Rama 9
+      Total paid ฿149
+    `);
+
+    expect(result?.source).toBe("GrabFood - KFC Central Rama 9");
+  });
+
   it("uses origin and destination for ride sources", () => {
     const result = parseGrabExpense(`
       GrabCar
