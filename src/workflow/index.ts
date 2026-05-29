@@ -1,5 +1,4 @@
 import { quickReplyMessages, replyFlex, replyMessage } from "../lineApi";
-import { parseGrabExpense } from "./grab";
 import * as Train from "./train";
 import tags from "./tags.json";
 import { insertExpend, insertTransportation } from "./expende";
@@ -167,16 +166,6 @@ export async function processTextMessage(
       userId,
       userState?.origin!,
       text,
-    );
-  }
-
-  const grabExpense = parseGrabExpense(text);
-  if (grabExpense) {
-    return confirmationExpend(
-      accessToken,
-      replyToken,
-      grabExpense,
-      grabExpense.amount,
     );
   }
 }

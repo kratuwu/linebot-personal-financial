@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import * as WorkFlow from "./workflow";
 import { insertExpend } from "./workflow/expende";
-import { parseGrabExpense } from "./workflow/grab";
+import { buildGrabExpense } from "./workflow/grab";
 type Bindings = {
   CHANNEL_SECRET: string;
   LINE_CHANNEL_ACCESS_TOKEN: string;
@@ -14,7 +14,7 @@ const app = new Hono<{ Bindings: Bindings }>();
 
 app.post("/grab/webhook", async (c) => {
   const payload = await c.req.json<{
-    text?: string;
+    service?: string;
     source?: string;
     amount?: number | string;
     date?: string;
@@ -35,31 +35,34 @@ app.post("/grab/webhook", async (c) => {
     );
   }
 
-  const receiptText = payload.text ?? "";
   const amount = toOptionalAmount(payload.amount);
-  const expense = parseGrabExpense(receiptText, {
+  const expense = buildGrabExpense({
+    service: payload.service,
     amount,
     date: payload.date,
+    source: payload.source,
     referenceId: payload.referenceId,
   });
   if (!expense) {
     return c.json(
       {
         ok: false,
-        error: "Cannot parse Grab expense",
+        error: "Invalid Grab expense payload",
         subject: payload.subject,
       },
       422,
     );
   }
 
-  const source = buildExpenseSource(expense.source, payload.source);
-  const savedExpense = {
-    ...expense,
-    source,
-  };
+  const savedExpense = expense;
 
-  const dedupeKey = `grab:${expense.referenceId ?? await sha256(receiptText)}`;
+  const dedupeKey = `grab:${expense.referenceId ?? await sha256(JSON.stringify({
+    service: payload.service,
+    source: payload.source,
+    amount: expense.amount,
+    date: expense.date,
+    subject: payload.subject,
+  }))}`;
   const existingExpense = await c.env.KV.get(dedupeKey);
   if (existingExpense) {
     return c.json({
@@ -77,7 +80,7 @@ app.post("/grab/webhook", async (c) => {
       c.env.NOTION_TOKEN,
       c.env.EXPENDE_DATABASE_ID,
       expense.tag,
-      source,
+      expense.source,
       expense.amount,
       expense.category,
       expense.date,
@@ -186,20 +189,6 @@ async function sha256(text: string) {
   return [...new Uint8Array(hash)]
     .map((byte) => byte.toString(16).padStart(2, "0"))
     .join("");
-}
-
-function buildExpenseSource(parsedSource: string, overrideSource?: string) {
-  const cleanOverride = overrideSource?.trim();
-  if (!cleanOverride) {
-    return parsedSource;
-  }
-
-  const service = parsedSource.split(" - ")[0];
-  if (cleanOverride.toLowerCase().startsWith(service.toLowerCase())) {
-    return cleanOverride;
-  }
-
-  return `${service} - ${cleanOverride}`;
 }
 
 function toOptionalAmount(amount: number | string | undefined) {
