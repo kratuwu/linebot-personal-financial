@@ -20,6 +20,7 @@ type MangmoomCard = {
 };
 
 type MangmoomStation = {
+  stationCode?: string;
   stationName?: string;
   dateForDispute?: string;
   date?: string;
@@ -245,10 +246,14 @@ export class MangmoomApiError extends Error {
 }
 
 function buildJourneySource(journey: MangmoomJourney) {
-  const from = journey.from?.stationName ?? "Unknown station";
-  const to = journey.to?.stationName ?? "Unknown station";
-  const status = journey.statusText ? ` (${journey.statusText})` : "";
-  return `MRT ${from} -> ${to}${status}`;
+  const from = formatStation(journey.from);
+  const to = formatStation(journey.to);
+  return `MRT ${from} -> ${to}`;
+}
+
+function formatStation(station?: MangmoomStation | null) {
+  const stationName = station?.stationName ?? "Unknown station";
+  return station?.stationCode ? `${stationName}(${station.stationCode})` : stationName;
 }
 
 function getJourneyDateCandidates(journey: MangmoomJourney) {

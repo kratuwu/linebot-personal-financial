@@ -30,8 +30,8 @@ describe("syncMangmoomJourneysToNotion", () => {
             journeys: [
               {
                 journeyId: "journey-1",
-                from: { stationName: "Sukhumvit" },
-                to: { stationName: "Silom" },
+                from: { stationCode: "BL22", stationName: "Sukhumvit" },
+                to: { stationCode: "BL26", stationName: "Silom" },
                 totalAmount: "21.00",
                 statusText: "Success",
               },
@@ -71,7 +71,7 @@ describe("syncMangmoomJourneysToNotion", () => {
     expect(insertTransportation).toHaveBeenCalledWith(
       "notion-token",
       "expense-db",
-      "MRT Sukhumvit -> Silom (Success)",
+      "MRT Sukhumvit(BL22) -> Silom(BL26)",
       21,
       "2026-05-31",
     );
@@ -162,11 +162,13 @@ describe("syncMangmoomJourneysToNotion", () => {
               {
                 journeyId: "thai-date-journey",
                 from: {
+                  stationCode: "BL18",
                   stationName: "ห้วยขวาง",
                   date: "31 พ.ค. 2569 | 16:24",
                   dateForDispute: "31/05/2026 | 16:24",
                 },
                 to: {
+                  stationCode: "BL13",
                   stationName: "สวนจตุจักร",
                   date: "31 พ.ค. 2569 | 16:41",
                   dateForDispute: "31/05/2026 | 16:41",
@@ -197,7 +199,7 @@ describe("syncMangmoomJourneysToNotion", () => {
     expect(insertTransportation).toHaveBeenCalledWith(
       "notion-token",
       "expense-db",
-      "MRT ห้วยขวาง -> สวนจตุจักร",
+      "MRT ห้วยขวาง(BL18) -> สวนจตุจักร(BL13)",
       27,
       "2026-05-31",
     );
