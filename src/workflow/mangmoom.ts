@@ -21,6 +21,7 @@ type MangmoomCard = {
 
 type MangmoomStation = {
   stationName?: string;
+  dateForDispute?: string;
   date?: string;
 };
 
@@ -121,7 +122,7 @@ export async function syncMangmoomJourneysToNotion({
       expendeDatabaseId,
       buildJourneySource(journey),
       amount,
-      toExpenseDate(journey),
+      normalizeJourneyDate(journey),
     );
     await kv.put(dedupeKey, JSON.stringify(journey), {
       expirationTtl: 60 * 60 * 24 * 365,
@@ -185,8 +186,13 @@ class MangmoomClient {
     tokens?: Partial<MangmoomTokens>,
   ): Promise<{ body: T; headers: Headers }> {
     const headers: Record<string, string> = {
+      "Accept": "application/json",
       "Content-Type": "application/json; charset=utf-8",
       "Content-Language": "en_EN",
+      "Origin": "https://www.mangmoomemv.com",
+      "Referer": "https://www.mangmoomemv.com/",
+      "User-Agent":
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
     };
     const cookie = buildAuthCookie(tokens);
     if (cookie) {
@@ -198,7 +204,20 @@ class MangmoomClient {
       headers,
       body: JSON.stringify(body),
     });
-    const payload = await response.json<any>();
+    const responseText = await response.text();
+    let payload: any;
+    try {
+      payload = JSON.parse(responseText);
+    } catch {
+      throw new MangmoomApiError(
+        `Mangmoom API ${path} returned non-JSON response`,
+        response.status,
+        {
+          contentType: response.headers.get("content-type"),
+          bodySnippet: responseText.slice(0, 200),
+        },
+      );
+    }
 
     if (!response.ok) {
       throw new MangmoomApiError(
@@ -232,20 +251,33 @@ function buildJourneySource(journey: MangmoomJourney) {
   return `MRT ${from} -> ${to}${status}`;
 }
 
-function toExpenseDate(journey: MangmoomJourney) {
-  return journey.date ?? journey.from?.date ?? journey.to?.date ?? journey.dateForDispute;
+function getJourneyDateCandidates(journey: MangmoomJourney) {
+  return [
+    journey.dateForDispute,
+    journey.from?.dateForDispute,
+    journey.to?.dateForDispute,
+    journey.date,
+    journey.from?.date,
+    journey.to?.date,
+  ];
 }
 
 function normalizeJourneyDate(journey: MangmoomJourney) {
-  const rawDate = toExpenseDate(journey);
-  if (!rawDate) return undefined;
+  for (const rawDate of getJourneyDateCandidates(journey)) {
+    if (!rawDate) continue;
 
-  const isoDate = rawDate.match(/\b(\d{4})-(\d{2})-(\d{2})\b/);
-  if (isoDate) {
-    return `${isoDate[1]}-${isoDate[2]}-${isoDate[3]}`;
+    const isoDate = rawDate.match(/\b(\d{4})-(\d{2})-(\d{2})\b/);
+    if (isoDate) {
+      return `${isoDate[1]}-${isoDate[2]}-${isoDate[3]}`;
+    }
+
+    const parsedDate = parseDateFromText(rawDate);
+    if (parsedDate) {
+      return parsedDate;
+    }
   }
 
-  return parseDateFromText(rawDate);
+  return undefined;
 }
 
 function toAmount(amount: MangmoomJourney["totalAmount"]) {
