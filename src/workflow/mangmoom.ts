@@ -2,6 +2,7 @@ import { insertTransportation } from "./expende";
 import { parseDateFromText } from "../utils/date";
 
 const MANGMOOM_API_BASE = "https://www.mangmoomemv.com/v1";
+const MAX_JOURNEY_PAGES = 10;
 
 type MangmoomTokens = {
   accessToken: string;
@@ -46,6 +47,8 @@ type SyncResult = {
   inserted: number;
   skipped: number;
   skippedOutsideDate: number;
+  fetchedPages: number;
+  stoppedAfterTargetDate: boolean;
   date?: string;
   journeys: MangmoomJourney[];
 };
@@ -59,7 +62,7 @@ export async function syncMangmoomJourneysToNotion({
   cardId,
   date,
   pageNo = 1,
-  pageSize = 50,
+  pageSize = 100,
 }: {
   kv: KVNamespace;
   notionToken: string;
@@ -83,26 +86,22 @@ export async function syncMangmoomJourneysToNotion({
 
   const cards = cardId ? [{ cardId }] : await client.listCards(tokens);
 
-  const fetchedJourneys = (
-    await Promise.all(
-      cards
-        .filter((card): card is Required<Pick<MangmoomCard, "cardId">> => !!card.cardId)
-        .map((card) =>
-          client.listJourneys(tokens, {
-            cardId: card.cardId,
-            pageNo,
-            pageSize,
-          })
-        ),
-    )
-  ).flat();
-  const journeys = date
-    ? fetchedJourneys.filter((journey) => normalizeJourneyDate(journey) === date)
-    : fetchedJourneys;
+  const {
+    journeys,
+    skippedOutsideDate,
+    fetchedPages,
+    stoppedAfterTargetDate,
+  } = await fetchJourneysForDate({
+    client,
+    tokens,
+    cards,
+    date,
+    pageNo,
+    pageSize,
+  });
 
   let inserted = 0;
   let skipped = 0;
-  const skippedOutsideDate = fetchedJourneys.length - journeys.length;
 
   for (const journey of journeys) {
     const amount = toAmount(journey.totalAmount);
@@ -131,7 +130,72 @@ export async function syncMangmoomJourneysToNotion({
     inserted += 1;
   }
 
-  return { inserted, skipped, skippedOutsideDate, date, journeys };
+  return {
+    inserted,
+    skipped,
+    skippedOutsideDate,
+    fetchedPages,
+    stoppedAfterTargetDate,
+    date,
+    journeys,
+  };
+}
+
+async function fetchJourneysForDate({
+  client,
+  tokens,
+  cards,
+  date,
+  pageNo,
+  pageSize,
+}: {
+  client: MangmoomClient;
+  tokens: MangmoomTokens;
+  cards: MangmoomCard[];
+  date?: string;
+  pageNo: number;
+  pageSize: number;
+}) {
+  const journeys: MangmoomJourney[] = [];
+  let skippedOutsideDate = 0;
+  let fetchedPages = 0;
+  let stoppedAfterTargetDate = false;
+
+  for (const card of cards) {
+    if (!card.cardId) continue;
+
+    let currentPageNo = pageNo;
+    for (let pageCount = 0; pageCount < (date ? MAX_JOURNEY_PAGES : 1); pageCount += 1) {
+      const pageJourneys = await client.listJourneys(tokens, {
+        cardId: card.cardId,
+        pageNo: currentPageNo,
+        pageSize,
+      });
+      fetchedPages += 1;
+
+      const result = filterJourneysByDate(pageJourneys, date);
+      journeys.push(...result.journeys);
+      skippedOutsideDate += result.skippedOutsideDate;
+
+      if (
+        result.stoppedAfterTargetDate ||
+        pageJourneys.length === 0 ||
+        pageJourneys.length < pageSize
+      ) {
+        stoppedAfterTargetDate ||= result.stoppedAfterTargetDate;
+        break;
+      }
+
+      currentPageNo += 1;
+    }
+  }
+
+  return {
+    journeys,
+    skippedOutsideDate,
+    fetchedPages,
+    stoppedAfterTargetDate,
+  };
 }
 
 class MangmoomClient {
@@ -283,6 +347,40 @@ function normalizeJourneyDate(journey: MangmoomJourney) {
   }
 
   return undefined;
+}
+
+function filterJourneysByDate(journeys: MangmoomJourney[], date?: string) {
+  if (!date) {
+    return {
+      journeys,
+      skippedOutsideDate: 0,
+      stoppedAfterTargetDate: false,
+    };
+  }
+
+  const matchedJourneys: MangmoomJourney[] = [];
+  let skippedOutsideDate = 0;
+  let stoppedAfterTargetDate = false;
+
+  for (const journey of journeys) {
+    const journeyDate = normalizeJourneyDate(journey);
+    if (journeyDate === date) {
+      matchedJourneys.push(journey);
+      continue;
+    }
+
+    skippedOutsideDate += 1;
+    if (journeyDate && journeyDate < date) {
+      stoppedAfterTargetDate = true;
+      break;
+    }
+  }
+
+  return {
+    journeys: matchedJourneys,
+    skippedOutsideDate,
+    stoppedAfterTargetDate,
+  };
 }
 
 function toAmount(amount: MangmoomJourney["totalAmount"]) {

@@ -48,6 +48,17 @@ describe("syncMangmoomJourneysToNotion", () => {
               },
             ],
           },
+          {
+            travelDate: "2026-05-30",
+            journeys: [
+              {
+                journeyId: "older-journey",
+                from: { stationName: "Lat Phrao" },
+                to: { stationName: "Phahon Yothin" },
+                totalAmount: 19,
+              },
+            ],
+          },
         ],
       }));
     vi.stubGlobal("fetch", fetchMock);
@@ -64,7 +75,9 @@ describe("syncMangmoomJourneysToNotion", () => {
     expect(result).toMatchObject({
       inserted: 1,
       skipped: 0,
-      skippedOutsideDate: 1,
+      skippedOutsideDate: 2,
+      fetchedPages: 1,
+      stoppedAfterTargetDate: true,
       date: "2026-05-31",
     });
     expect(insertTransportation).toHaveBeenCalledOnce();
@@ -141,6 +154,101 @@ describe("syncMangmoomJourneysToNotion", () => {
       skippedOutsideDate: 0,
     });
     expect(insertTransportation).not.toHaveBeenCalled();
+  });
+
+  it("fetches the next page when the requested date is older than the first page", async () => {
+    const fetchMock = vi.fn()
+      .mockResolvedValueOnce(jsonResponse({}, {
+        "set-cookie": [
+          "accessToken=access-token; Path=/",
+          "refreshToken=refresh-token; Path=/",
+        ].join(", "),
+      }))
+      .mockResolvedValueOnce(jsonResponse({
+        list: [{ cardId: "card-1" }],
+      }))
+      .mockResolvedValueOnce(jsonResponse({
+        list: [
+          {
+            travelDate: "2026-06-01",
+            journeys: [
+              {
+                journeyId: "newer-1",
+                from: { stationName: "A" },
+                to: { stationName: "B" },
+                totalAmount: 10,
+              },
+              {
+                journeyId: "newer-2",
+                from: { stationName: "B" },
+                to: { stationName: "C" },
+                totalAmount: 11,
+              },
+            ],
+          },
+        ],
+      }))
+      .mockResolvedValueOnce(jsonResponse({
+        list: [
+          {
+            travelDate: "2026-05-31",
+            journeys: [
+              {
+                journeyId: "target-date",
+                from: { stationCode: "BL18", stationName: "Huai Khwang" },
+                to: { stationCode: "BL13", stationName: "Chatuchak Park" },
+                totalAmount: 27,
+              },
+            ],
+          },
+          {
+            travelDate: "2026-05-30",
+            journeys: [
+              {
+                journeyId: "older-date",
+                from: { stationName: "Lat Phrao" },
+                to: { stationName: "Phahon Yothin" },
+                totalAmount: 19,
+              },
+            ],
+          },
+        ],
+      }));
+    vi.stubGlobal("fetch", fetchMock);
+
+    const result = await syncMangmoomJourneysToNotion({
+      kv: createKv(),
+      notionToken: "notion-token",
+      expendeDatabaseId: "expense-db",
+      email: "me@example.com",
+      password: "password",
+      date: "2026-05-31",
+      pageSize: 2,
+    });
+
+    expect(result).toMatchObject({
+      inserted: 1,
+      skippedOutsideDate: 3,
+      fetchedPages: 2,
+      stoppedAfterTargetDate: true,
+    });
+    expect(requestBody(fetchMock, 2)).toMatchObject({
+      cardId: "card-1",
+      pageNo: 1,
+      pageSize: 2,
+    });
+    expect(requestBody(fetchMock, 3)).toMatchObject({
+      cardId: "card-1",
+      pageNo: 2,
+      pageSize: 2,
+    });
+    expect(insertTransportation).toHaveBeenCalledWith(
+      "notion-token",
+      "expense-db",
+      "MRT Huai Khwang(BL18) -> Chatuchak Park(BL13)",
+      27,
+      "2026-05-31",
+    );
   });
 
   it("matches Thai journey dates by falling back to dateForDispute", async () => {
