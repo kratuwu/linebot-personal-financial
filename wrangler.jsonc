@@ -18,6 +18,10 @@
       "head_sampling_rate": 1
     }
   },
+  "triggers": {
+    // 00:00 Asia/Bangkok is 17:00 UTC.
+    "crons": ["0 17 * * *"]
+  },
   "kv_namespaces": [
     {
       "binding": "KV",
@@ -30,6 +34,16 @@
   "env": {
     "production": {
       "name": "line-bot",
+      "kv_namespaces": [
+        {
+          "binding": "KV",
+          "id": "ac12a2c6116b4acdb71266b54d0d3943"
+        }
+      ],
+      "triggers": {
+        // 00:00 Asia/Bangkok is 17:00 UTC.
+        "crons": ["0 17 * * *"]
+      },
       "vars": {
         "APP_ENV": "production"
       }

@@ -2,6 +2,11 @@ import { Hono } from "hono";
 import * as WorkFlow from "./workflow";
 import { insertExpend } from "./workflow/expende";
 import { buildGrabExpense } from "./workflow/grab";
+import { getYesterdayBangkokDate, isIsoDate } from "./utils/date";
+import {
+  MangmoomApiError,
+  syncMangmoomJourneysToNotion,
+} from "./workflow/mangmoom";
 type Bindings = {
   CHANNEL_SECRET: string;
   LINE_CHANNEL_ACCESS_TOKEN: string;
@@ -9,8 +14,65 @@ type Bindings = {
   EXPENDE_DATABASE_ID: string;
   NOTION_TOKEN: string;
   GRAB_WEBHOOK_SECRET?: string;
+  MANGMOOM_SYNC_SECRET?: string;
+  MANGMOOM_EMAIL?: string;
+  MANGMOOM_PASSWORD?: string;
 };
 const app = new Hono<{ Bindings: Bindings }>();
+
+app.post("/mangmoom/sync", async (c) => {
+  const payload = await c.req.json<{
+    secret?: string;
+    cardId?: string;
+    date?: string;
+    pageNo?: number;
+    pageSize?: number;
+  }>().catch(() => ({} as {
+    secret?: string;
+    cardId?: string;
+    date?: string;
+    pageNo?: number;
+    pageSize?: number;
+  }));
+  const secret = c.req.header("x-mangmoom-sync-secret") ?? payload.secret;
+
+  if (!isMangmoomAuthorized(c.env, secret)) {
+    return c.json({ ok: false, error: "Invalid Mangmoom sync secret" }, 401);
+  }
+  if (payload.date && !isIsoDate(payload.date)) {
+    return c.json(
+      { ok: false, error: "Mangmoom sync date must be YYYY-MM-DD" },
+      422,
+    );
+  }
+
+  if (!c.env.NOTION_TOKEN || !c.env.EXPENDE_DATABASE_ID) {
+    return c.json(
+      { ok: false, error: "Missing Notion Worker configuration" },
+      500,
+    );
+  }
+  if (!c.env.MANGMOOM_EMAIL || !c.env.MANGMOOM_PASSWORD) {
+    return c.json(
+      { ok: false, error: "Missing Mangmoom email or password" },
+      422,
+    );
+  }
+
+  try {
+    const result = await runMangmoomSync(c.env, {
+      cardId: payload.cardId,
+      date: payload.date,
+      pageNo: payload.pageNo,
+      pageSize: payload.pageSize,
+    });
+
+    return c.json({ ok: true, ...result });
+  } catch (error) {
+    console.error("Failed to sync Mangmoom journeys", error);
+    return mangmoomErrorResponse(c, error);
+  }
+});
 
 app.post("/grab/webhook", async (c) => {
   const payload = await c.req.json<{
@@ -181,7 +243,17 @@ app.post("/webhook", async (c) => {
   return c.text("OK");
 });
 
-export default app;
+export default {
+  fetch: app.fetch,
+  async scheduled(
+    controller: ScheduledController,
+    env: Bindings,
+    _ctx: ExecutionContext,
+  ) {
+    console.log(`Running scheduled Mangmoom sync for cron ${controller.cron}`);
+    await runMangmoomSync(env, { date: getYesterdayBangkokDate() });
+  },
+};
 
 async function sha256(text: string) {
   const data = new TextEncoder().encode(text);
@@ -203,4 +275,64 @@ function toOptionalAmount(amount: number | string | undefined) {
   return Number.isFinite(numericAmount) && numericAmount > 0
     ? numericAmount
     : undefined;
+}
+
+function isMangmoomAuthorized(env: Bindings, secret?: string) {
+  if (!env.MANGMOOM_SYNC_SECRET) {
+    return true;
+  }
+
+  return secret === env.MANGMOOM_SYNC_SECRET;
+}
+
+async function runMangmoomSync(
+  env: Bindings,
+  options: {
+    cardId?: string;
+    date?: string;
+    pageNo?: number;
+    pageSize?: number;
+  } = {},
+) {
+  if (!env.NOTION_TOKEN || !env.EXPENDE_DATABASE_ID) {
+    throw new Error("Missing Notion Worker configuration");
+  }
+  if (!env.MANGMOOM_EMAIL || !env.MANGMOOM_PASSWORD) {
+    throw new Error("Missing Mangmoom email or password");
+  }
+
+  return syncMangmoomJourneysToNotion({
+    kv: env.KV,
+    notionToken: env.NOTION_TOKEN,
+    expendeDatabaseId: env.EXPENDE_DATABASE_ID,
+    email: env.MANGMOOM_EMAIL,
+    password: env.MANGMOOM_PASSWORD,
+    cardId: options.cardId,
+    date: options.date,
+    pageNo: options.pageNo,
+    pageSize: options.pageSize,
+  });
+}
+
+function mangmoomErrorResponse(c: any, error: unknown) {
+  if (error instanceof MangmoomApiError) {
+    return c.json(
+      {
+        ok: false,
+        error: error.message,
+        source: "mangmoom",
+        mangmoomStatus: error.status,
+        mangmoomPayload: error.payload,
+      },
+      error.status >= 400 && error.status < 500 ? error.status : 502,
+    );
+  }
+
+  return c.json(
+    {
+      ok: false,
+      error: error instanceof Error ? error.message : "Unknown error",
+    },
+    500,
+  );
 }

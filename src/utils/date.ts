@@ -52,6 +52,16 @@ export function toBangkokMonthName(date: Date) {
   });
 }
 
+export function getYesterdayBangkokDate() {
+  return toBangkokDateString(new Date(Date.now() - 24 * 60 * 60 * 1000));
+}
+
+export function isIsoDate(value: string) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  const date = new Date(`${value}T00:00:00Z`);
+  return date.toISOString().slice(0, 10) === value;
+}
+
 function normalizeYear(year: string) {
   const parsedYear = Number(year);
   if (parsedYear < 100) {

@@ -1,0 +1,334 @@
+import { insertTransportation } from "./expende";
+import { parseDateFromText } from "../utils/date";
+
+const MANGMOOM_API_BASE = "https://www.mangmoomemv.com/v1";
+
+type MangmoomTokens = {
+  accessToken: string;
+  refreshToken: string;
+  lumenSession?: string;
+};
+
+type MangmoomLoginResult = Partial<MangmoomTokens> & {
+  isRequireOTP?: boolean;
+  loginRef?: string;
+};
+
+type MangmoomCard = {
+  cardId?: string;
+  cardNumber?: string;
+};
+
+type MangmoomStation = {
+  stationName?: string;
+  date?: string;
+};
+
+type MangmoomJourney = {
+  journeyId?: string;
+  cardNumber?: string;
+  from?: MangmoomStation | null;
+  to?: MangmoomStation | null;
+  date?: string;
+  dateForDispute?: string;
+  totalAmount?: number | string | null;
+  statusText?: string;
+  passName?: string | null;
+};
+
+type MangmoomListResponse<T> = {
+  list?: T[];
+};
+
+type SyncResult = {
+  inserted: number;
+  skipped: number;
+  skippedOutsideDate: number;
+  date?: string;
+  journeys: MangmoomJourney[];
+};
+
+export async function syncMangmoomJourneysToNotion({
+  kv,
+  notionToken,
+  expendeDatabaseId,
+  email,
+  password,
+  cardId,
+  date,
+  pageNo = 1,
+  pageSize = 50,
+}: {
+  kv: KVNamespace;
+  notionToken: string;
+  expendeDatabaseId: string;
+  email: string;
+  password: string;
+  cardId?: string;
+  date?: string;
+  pageNo?: number;
+  pageSize?: number;
+}): Promise<SyncResult> {
+  const client = new MangmoomClient();
+  const loginResult = await client.login({ email, password, ref1: "" });
+  if (loginResult.isRequireOTP) {
+    throw new Error(
+      `Mangmoom login requires OTP${loginResult.loginRef ? `: ${loginResult.loginRef}` : ""}`,
+    );
+  }
+
+  const tokens = requireTokens(loginResult);
+
+  const cards = cardId ? [{ cardId }] : await client.listCards(tokens);
+
+  const fetchedJourneys = (
+    await Promise.all(
+      cards
+        .filter((card): card is Required<Pick<MangmoomCard, "cardId">> => !!card.cardId)
+        .map((card) =>
+          client.listJourneys(tokens, {
+            cardId: card.cardId,
+            pageNo,
+            pageSize,
+          })
+        ),
+    )
+  ).flat();
+  const journeys = date
+    ? fetchedJourneys.filter((journey) => normalizeJourneyDate(journey) === date)
+    : fetchedJourneys;
+
+  let inserted = 0;
+  let skipped = 0;
+  const skippedOutsideDate = fetchedJourneys.length - journeys.length;
+
+  for (const journey of journeys) {
+    const amount = toAmount(journey.totalAmount);
+    if (!amount || amount <= 0) {
+      skipped += 1;
+      continue;
+    }
+
+    const dedupeKey = `mangmoom:${journey.journeyId ?? await sha256(JSON.stringify(journey))}`;
+    const existing = await kv.get(dedupeKey);
+    if (existing) {
+      skipped += 1;
+      continue;
+    }
+
+    await insertTransportation(
+      notionToken,
+      expendeDatabaseId,
+      buildJourneySource(journey),
+      amount,
+      toExpenseDate(journey),
+    );
+    await kv.put(dedupeKey, JSON.stringify(journey), {
+      expirationTtl: 60 * 60 * 24 * 365,
+    });
+    inserted += 1;
+  }
+
+  return { inserted, skipped, skippedOutsideDate, date, journeys };
+}
+
+class MangmoomClient {
+  async login(body: {
+    email: string;
+    password: string;
+    ref1: string;
+  }): Promise<MangmoomLoginResult> {
+    const response = await this.requestWithHeaders<MangmoomLoginResult>(
+      "/login",
+      body,
+    );
+    return { ...response.body, ...getAuthCookiesFromHeaders(response.headers) };
+  }
+
+  async listCards(tokens: MangmoomTokens): Promise<MangmoomCard[]> {
+    const response = await this.request<MangmoomListResponse<MangmoomCard> | MangmoomCard[]>(
+      "/card",
+      {},
+      tokens,
+    );
+    return Array.isArray(response) ? response : response.list ?? [];
+  }
+
+  async listJourneys(
+    tokens: MangmoomTokens,
+    body: { cardId: string; pageNo: number; pageSize: number },
+  ): Promise<MangmoomJourney[]> {
+    const response = await this.request<
+      MangmoomListResponse<{ travelDate?: string; journeys?: MangmoomJourney[] }>
+    >("/journey", body, tokens);
+
+    return (response.list ?? []).flatMap((group) =>
+      (group.journeys ?? []).map((journey) => ({
+        ...journey,
+        date: journey.date ?? group.travelDate,
+      }))
+    );
+  }
+
+  private async request<T>(
+    path: string,
+    body: Record<string, unknown>,
+    tokens?: Partial<MangmoomTokens>,
+  ): Promise<T> {
+    const response = await this.requestWithHeaders<T>(path, body, tokens);
+    return response.body;
+  }
+
+  private async requestWithHeaders<T>(
+    path: string,
+    body: Record<string, unknown>,
+    tokens?: Partial<MangmoomTokens>,
+  ): Promise<{ body: T; headers: Headers }> {
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json; charset=utf-8",
+      "Content-Language": "en_EN",
+    };
+    const cookie = buildAuthCookie(tokens);
+    if (cookie) {
+      headers.Cookie = cookie;
+    }
+
+    const response = await fetch(`${MANGMOOM_API_BASE}${path}`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify(body),
+    });
+    const payload = await response.json<any>();
+
+    if (!response.ok) {
+      throw new MangmoomApiError(
+        `Mangmoom API ${path} failed: ${
+          payload?.meta?.responseMessage ?? response.statusText
+        }`,
+        response.status,
+        payload,
+      );
+    }
+
+    return { body: (payload.data ?? payload) as T, headers: response.headers };
+  }
+}
+
+export class MangmoomApiError extends Error {
+  constructor(
+    message: string,
+    readonly status: number,
+    readonly payload: unknown,
+  ) {
+    super(message);
+    this.name = "MangmoomApiError";
+  }
+}
+
+function buildJourneySource(journey: MangmoomJourney) {
+  const from = journey.from?.stationName ?? "Unknown station";
+  const to = journey.to?.stationName ?? "Unknown station";
+  const status = journey.statusText ? ` (${journey.statusText})` : "";
+  return `MRT ${from} -> ${to}${status}`;
+}
+
+function toExpenseDate(journey: MangmoomJourney) {
+  return journey.date ?? journey.from?.date ?? journey.to?.date ?? journey.dateForDispute;
+}
+
+function normalizeJourneyDate(journey: MangmoomJourney) {
+  const rawDate = toExpenseDate(journey);
+  if (!rawDate) return undefined;
+
+  const isoDate = rawDate.match(/\b(\d{4})-(\d{2})-(\d{2})\b/);
+  if (isoDate) {
+    return `${isoDate[1]}-${isoDate[2]}-${isoDate[3]}`;
+  }
+
+  return parseDateFromText(rawDate);
+}
+
+function toAmount(amount: MangmoomJourney["totalAmount"]) {
+  if (typeof amount === "number") return amount;
+  if (!amount) return undefined;
+  const numericAmount = Number(amount.toString().replace(/[^\d.]/g, ""));
+  return Number.isFinite(numericAmount) ? numericAmount : undefined;
+}
+
+function getAuthCookiesFromHeaders(headers: Headers): Partial<MangmoomTokens> {
+  const setCookie = headers.get("set-cookie");
+  if (!setCookie) {
+    return {};
+  }
+
+  const cookies = new Map<string, string>();
+  for (const cookie of splitSetCookieHeader(setCookie)) {
+    const [nameValue] = cookie.split(";");
+    const separatorIndex = nameValue.indexOf("=");
+    if (separatorIndex === -1) continue;
+
+    cookies.set(
+      nameValue.slice(0, separatorIndex).trim(),
+      decodeURIComponent(nameValue.slice(separatorIndex + 1).trim()),
+    );
+  }
+
+  return {
+    accessToken: firstCookieValue(cookies, [
+      "accessToken",
+      "access_token",
+      "access",
+    ]),
+    refreshToken: firstCookieValue(cookies, [
+      "refreshToken",
+      "refresh_token",
+      "refresh",
+    ]),
+    lumenSession: firstCookieValue(cookies, ["lumen_session"]),
+  };
+}
+
+function buildAuthCookie(tokens?: Partial<MangmoomTokens>) {
+  if (!tokens) return undefined;
+
+  return [
+    ["accessToken", tokens.accessToken],
+    ["refreshToken", tokens.refreshToken],
+    ["lumen_session", tokens.lumenSession],
+  ]
+    .filter((cookie): cookie is [string, string] => !!cookie[1])
+    .map(([name, value]) => `${name}=${encodeURIComponent(value)}`)
+    .join("; ");
+}
+
+function splitSetCookieHeader(setCookie: string) {
+  return setCookie.split(/,(?=\s*[^;,=\s]+=[^;,]*)/);
+}
+
+function firstCookieValue(cookies: Map<string, string>, names: string[]) {
+  for (const name of names) {
+    const value = cookies.get(name);
+    if (value) return value;
+  }
+  return undefined;
+}
+
+function requireTokens(tokens: Partial<MangmoomTokens>): MangmoomTokens {
+  if (!tokens.accessToken || !tokens.refreshToken) {
+    throw new Error("Mangmoom response did not include auth tokens");
+  }
+
+  return {
+    accessToken: tokens.accessToken,
+    refreshToken: tokens.refreshToken,
+    lumenSession: tokens.lumenSession,
+  };
+}
+
+async function sha256(text: string) {
+  const data = new TextEncoder().encode(text);
+  const hash = await crypto.subtle.digest("SHA-256", data);
+  return [...new Uint8Array(hash)]
+    .map((byte) => byte.toString(16).padStart(2, "0"))
+    .join("");
+}
