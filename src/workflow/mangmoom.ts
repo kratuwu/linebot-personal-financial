@@ -62,7 +62,7 @@ export async function syncMangmoomJourneysToNotion({
   cardId,
   date,
   pageNo = 1,
-  pageSize = 100,
+  pageSize = 50,
 }: {
   kv: KVNamespace;
   notionToken: string;
