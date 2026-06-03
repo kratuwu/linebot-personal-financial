@@ -51,6 +51,13 @@ type SyncResult = {
   stoppedAfterTargetDate: boolean;
   date?: string;
   journeys: MangmoomJourney[];
+  insertedExpenses: MangmoomInsertedExpense[];
+};
+
+export type MangmoomInsertedExpense = {
+  source: string;
+  amount: number;
+  date?: string;
 };
 
 export async function syncMangmoomJourneysToNotion({
@@ -102,6 +109,7 @@ export async function syncMangmoomJourneysToNotion({
 
   let inserted = 0;
   let skipped = 0;
+  const insertedExpenses: MangmoomInsertedExpense[] = [];
 
   for (const journey of journeys) {
     const amount = toAmount(journey.totalAmount);
@@ -117,15 +125,22 @@ export async function syncMangmoomJourneysToNotion({
       continue;
     }
 
+    const source = buildJourneySource(journey);
+    const expenseDate = normalizeJourneyDate(journey);
     await insertTransportation(
       notionToken,
       expendeDatabaseId,
-      buildJourneySource(journey),
+      source,
       amount,
-      normalizeJourneyDate(journey),
+      expenseDate,
     );
     await kv.put(dedupeKey, JSON.stringify(journey), {
       expirationTtl: 60 * 60 * 24 * 365,
+    });
+    insertedExpenses.push({
+      source,
+      amount,
+      date: expenseDate,
     });
     inserted += 1;
   }
@@ -138,6 +153,7 @@ export async function syncMangmoomJourneysToNotion({
     stoppedAfterTargetDate,
     date,
     journeys,
+    insertedExpenses,
   };
 }
 

@@ -1,4 +1,8 @@
 import { Hono } from "hono";
+import {
+  notifyGrabInsertedExpense,
+  notifyMangmoomInsertedExpenses,
+} from "./notifications";
 import * as WorkFlow from "./workflow";
 import { insertExpend } from "./workflow/expende";
 import { buildGrabExpense } from "./workflow/grab";
@@ -17,6 +21,7 @@ type Bindings = {
   MANGMOOM_SYNC_SECRET?: string;
   MANGMOOM_EMAIL?: string;
   MANGMOOM_PASSWORD?: string;
+  PERSONAL_LINE_ID?: string;
 };
 const app = new Hono<{ Bindings: Bindings }>();
 
@@ -66,6 +71,7 @@ app.post("/mangmoom/sync", async (c) => {
       pageNo: payload.pageNo,
       pageSize: payload.pageSize,
     });
+    await notifyMangmoomInsertedExpenses(c.env, result);
 
     return c.json({ ok: true, ...result });
   } catch (error) {
@@ -162,6 +168,7 @@ app.post("/grab/webhook", async (c) => {
   await c.env.KV.put(dedupeKey, JSON.stringify(savedExpense), {
     expirationTtl: 60 * 60 * 24 * 90,
   });
+  await notifyGrabInsertedExpense(c.env, savedExpense);
 
   return c.json({
     ok: true,
@@ -251,7 +258,8 @@ export default {
     _ctx: ExecutionContext,
   ) {
     console.log(`Running scheduled Mangmoom sync for cron ${controller.cron}`);
-    await runMangmoomSync(env, { date: getYesterdayBangkokDate() });
+    const result = await runMangmoomSync(env, { date: getYesterdayBangkokDate() });
+    await notifyMangmoomInsertedExpenses(env, result);
   },
 };
 

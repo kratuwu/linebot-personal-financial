@@ -18,6 +18,26 @@ export async function replyMessage(accessToken: string, replyToken: string, text
   console.log(await resp.json())
 }
 
+export async function pushMessage(accessToken: string, to: string, text: string) {
+  const resp = await fetch("https://api.line.me/v2/bot/message/push", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify({
+      to,
+      messages: [
+        {
+          type: "text",
+          text,
+        },
+      ],
+    }),
+  });
+  console.log(await resp.json())
+}
+
 export async function quickReplyMessages(
   accessToken: string,
   token: string,
