@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@notionhq/client": "^5.11.1",
-    "bangkok-train-fare": "^0.1.0-snapshot.91221df",
+    "bangkok-train-fare": "^1.0.0",
     "hono": "^4.12.3"
   },
   "devDependencies": {
