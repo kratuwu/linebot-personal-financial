@@ -8,7 +8,7 @@
     "test": "vitest --passWithNoTests"
   },
   "dependencies": {
-    "@notionhq/client": "^5.11.1",
+    "@notionhq/client": "^5.23.1",
     "bangkok-train-fare": "^1.1.0",
     "hono": "^4.12.3"
   },
