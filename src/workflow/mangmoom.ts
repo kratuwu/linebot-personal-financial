@@ -1,7 +1,7 @@
 import { insertTransportation } from "./expende";
 import { parseDateFromText } from "../utils/date";
 
-const MANGMOOM_API_BASE = "https://www.mangmoomemv.com/v1";
+const MANGMOOM_API_BASE = "https://www.mangmoomemv.com/v1/mmemv-web";
 const MAX_JOURNEY_PAGES = 10;
 
 type MangmoomTokens = {
@@ -269,7 +269,7 @@ class MangmoomClient {
     const headers: Record<string, string> = {
       "Accept": "application/json",
       "Content-Type": "application/json; charset=utf-8",
-      "Content-Language": "en_EN",
+      "Content-Language": "th_TH",
       "Origin": "https://www.mangmoomemv.com",
       "Referer": "https://www.mangmoomemv.com/",
       "User-Agent":
